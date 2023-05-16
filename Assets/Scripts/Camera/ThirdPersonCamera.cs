@@ -201,6 +201,12 @@ namespace Edescal
             SetRotation(Quaternion.Euler(v_slerp.eulerAngles.x, slerp.eulerAngles.y, 0));
         }
 
+        public void ResetPosition()
+        {
+            transform.position = player.position;
+            SetRotation(player);
+        }
+
         public void SetRotation(Quaternion newRotation)
         {
             currentRotation.x = newRotation.eulerAngles.x;
@@ -211,6 +217,12 @@ namespace Edescal
             currentRotation.x = Mathf.Clamp(currentRotation.x, cameraAngleLimit.x, cameraAngleLimit.y);
             currentRotation.y = newRotation.eulerAngles.y;
             transform.rotation = Quaternion.Euler(currentRotation);
+        }
+
+        public void SetRotation(Transform transform)
+        {
+            var rotateForward = Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward, Vector3.up)) * Quaternion.Euler(new Vector3(20, 0, 0));
+            SetRotation(rotateForward);
         }
 
         public void SetTarget(Transform t)

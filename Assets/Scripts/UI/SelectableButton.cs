@@ -40,7 +40,7 @@ namespace Edescal
         {
             base.OnSelect(eventData);
 
-            if (selectedSound != null)
+            if (selectedSound != null && this.isActiveAndEnabled)
             {
                 audioSource.PlayOneShot(selectedSound);
             }

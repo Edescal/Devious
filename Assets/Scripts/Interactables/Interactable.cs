@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace Edescal.Interactables
 {
-    public class Interactable : MonoBehaviour
+    public class Interactable : MonoBehaviour, IDamageable
     {
         [SerializeField]
         private bool debugThis = true;
@@ -42,6 +42,11 @@ namespace Edescal.Interactables
             }
 
             onInteracted?.Invoke();
+        }
+    
+        public virtual void ApplyDamage(int damage, object source)
+        {
+            print($"Hitted damageable {gameObject.name}");
         }
     }
 }

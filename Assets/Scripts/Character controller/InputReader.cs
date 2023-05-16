@@ -4,20 +4,19 @@ using UnityEngine.InputSystem;
 
 public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ICameraActions
 {
-    private Controls controls;
-
     public Vector2 Movement { get; private set; }
     public event Action onInteracted;
     public event Action onUseItem;
     public bool Sprint { get; private set; }
     public bool Autosprint { get; private set; }
-
     public bool PlayerMapEnabled => controls.Player.enabled;
 
     public Vector2 CameraRotate { get; private set; }
     public float Zoom { get; private set; }
     public event Action onLockOn;
     public bool CameraMapEnabled => controls.Camera.enabled;
+
+    private Controls controls;
 
     private void OnEnable()
     {
@@ -56,6 +55,18 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ICam
 
     }
 
+    public void PlayerControls(bool value)
+    {
+        if (!value)
+        {
+            controls.Player.Disable();
+            Movement = Vector2.zero;
+            return;
+        }
+        controls.Player.Enable();
+    }
+
+    //IPlayerActions
     public void OnMove(InputAction.CallbackContext context)
     {
         Movement = context.ReadValue<Vector2>();

@@ -3,21 +3,18 @@ using UnityEngine;
 [RequireComponent(typeof(Light)), RequireComponent(typeof(AudioSource))]
 public class LightIntensity : MonoBehaviour
 {
-    [SerializeField] private Vector2 lightIntensityRange = new Vector2(2.5f, 3);
+    [SerializeField] private float lightIntensity = 1;
     [SerializeField] private float startTime = 1f;
-    [SerializeField] private float cycleTime = 4f;
     [SerializeField] private AnimationCurve cycleCurve;
     [SerializeField] private Transform billboardQuad;
     [SerializeField] private bool maintainVerticalAlignment = true;
     [Header("Sound FX")]
     [SerializeField] private AudioClip fireSound;
-    private Transform mainCamera;
     private Light _light;
     private AudioSource audioSource;
 
     private void Awake()
     {
-        mainCamera = Camera.main.transform;
         _light = GetComponent<Light>();
     }
 
@@ -32,10 +29,12 @@ public class LightIntensity : MonoBehaviour
             audioSource.clip = fireSound;
             audioSource.playOnAwake = true;
             audioSource.loop = true;
-            audioSource.Play();
+            audioSource.PlayDelayed(Random.Range(0, 2f));
         }
 
         if (billboardQuad == null) return;
+
+        CameraPrecullHandler.onPrecull += Billboarding;
 
         _light.intensity = 0;
         var quadScale = billboardQuad.localScale;
@@ -49,44 +48,25 @@ public class LightIntensity : MonoBehaviour
                 float t = f / 1;
                 billboardQuad.localScale = Vector3.Lerp(Vector3.zero, quadScale, t);
                 billboardQuad.localPosition = Vector3.Lerp(startPos, quadPos, t);
-                _light.intensity = Mathf.Lerp(0, lightIntensityRange.x, t);
-
-                if (maintainVerticalAlignment)
-                {
-                    var dir = mainCamera.forward;
-                    dir.y = 0;
-                    billboardQuad.rotation = Quaternion.LookRotation(dir);
-                }
-                else billboardQuad.rotation = mainCamera.rotation;
+                _light.intensity = Mathf.Lerp(0, lightIntensity, t);
 
             })
             .setOnComplete(()=> {
-                _light.intensity = lightIntensityRange.x;
+                _light.intensity = lightIntensity;
                 billboardQuad.localScale = quadScale;
-                LightIntensityCurve();
             });
     }
 
-    [ContextMenu("Reiniciar")]
-    private void LightIntensityCurve()
+    private void Billboarding(Camera cam)
     {
-        LeanTween.cancel(gameObject);
-        LeanTween.value(gameObject, lightIntensityRange.x, lightIntensityRange.y, cycleTime)
-            .setEase(cycleCurve)
-            .setOnUpdate((float f) =>
+        if (billboardQuad != null)
+        {
+            if (maintainVerticalAlignment)
             {
-                _light.intensity = f;
-                if (billboardQuad != null)
-                {
-                    if (maintainVerticalAlignment)
-                    {
-                        var dir = mainCamera.forward;
-                        dir.y = 0;
-                        billboardQuad.rotation = Quaternion.LookRotation(dir);
-                    }
-                    else billboardQuad.rotation = mainCamera.rotation;
-                }
-            })
-            .setRepeat(-1);            
+                var dir = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up);
+                billboardQuad.rotation = Quaternion.LookRotation(dir);
+            }
+            else billboardQuad.rotation = cam.transform.rotation;
+        }
     }
 }

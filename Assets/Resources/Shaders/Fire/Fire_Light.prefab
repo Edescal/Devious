@@ -83,7 +83,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 69
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -108,8 +108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 985de423a03cdc44190c428b529dd958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightIntensityRange: {x: 1, y: 3}
-  cycleTime: 6
+  lightIntensity: 3
+  startTime: 1
   cycleCurve:
     serializedVersion: 2
     m_Curve:
@@ -161,10 +161,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fireSound: {fileID: 8300000, guid: 745c7983fd801ae42b65d97bc2056788, type: 3}
-  billboard: 1
-  maintainVerticalAlignment: 1
   billboardQuad: {fileID: 0}
+  maintainVerticalAlignment: 1
+  fireSound: {fileID: 8300000, guid: 745c7983fd801ae42b65d97bc2056788, type: 3}
 --- !u!82 &5046597510313458665
 AudioSource:
   m_ObjectHideFlags: 0

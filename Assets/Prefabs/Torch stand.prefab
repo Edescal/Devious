@@ -18,7 +18,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2741838506371735178
 Transform:
@@ -54,12 +54,12 @@ MeshRenderer:
   m_GameObject: {fileID: 3262619562053862448}
   m_Enabled: 1
   m_CastShadows: 0
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   master: {fileID: 0}
-  onFire: 0
+  onFire: 1
   onFireEvent:
     m_PersistentCalls:
       m_Calls:
@@ -148,6 +148,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2741838506371735178}
     m_Modifications:
+    - target: {fileID: 2297551562818209255, guid: 9b5f5e393da78764c8115e6b22701314, type: 3}
+      propertyPath: m_Range
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2297551562818209255, guid: 9b5f5e393da78764c8115e6b22701314, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -334,6 +338,10 @@ PrefabInstance:
     - target: {fileID: 5759374628623869917, guid: 93ec36d9c0e97c5439df21aa4d99a957, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5759374628623869917, guid: 93ec36d9c0e97c5439df21aa4d99a957, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6935204967012163366, guid: 93ec36d9c0e97c5439df21aa4d99a957, type: 3}
       propertyPath: m_CastShadows

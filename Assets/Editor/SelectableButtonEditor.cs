@@ -6,6 +6,9 @@ namespace Edescal.DialogueSystem
     [CustomEditor(typeof(SelectableButton))]
     public class SelectableButtonEditor : ButtonEditor
     {
+        private bool defaultFoldout = true;
+        private bool selectableFoldout = true;
+
         private SerializedProperty imageCanvasProperty;
         private SerializedProperty glowCanvasProperty;
         private SerializedProperty fadeTimeProperty;
@@ -13,7 +16,6 @@ namespace Edescal.DialogueSystem
         private SerializedProperty tweenTypeProperty;
         private SerializedProperty selectedSound, pressedSound;
         private SerializedProperty buttonLabelProperty;
-
 
         protected override void OnEnable()
         {
@@ -31,48 +33,56 @@ namespace Edescal.DialogueSystem
 
         public override void OnInspectorGUI()
         {
-            serializedObject.Update();
-            EditorGUILayout.HelpBox("Selected button image properties", MessageType.Info);
-            EditorGUILayout.PropertyField(buttonLabelProperty);
-            EditorGUILayout.PropertyField(imageCanvasProperty);
-            EditorGUILayout.PropertyField(glowCanvasProperty);
-            EditorGUILayout.PropertyField(fadeTimeProperty);
-            EditorGUILayout.PropertyField(glowTimeProperty);
-            EditorGUILayout.PropertyField(tweenTypeProperty);
-            EditorGUILayout.HelpBox("Sound FX", MessageType.Info);
-            EditorGUILayout.PropertyField(selectedSound);
-            EditorGUILayout.PropertyField(pressedSound);
-            EditorGUILayout.Space();
-            EditorGUILayout.HelpBox("Inherited Button properties", MessageType.Info);
-            serializedObject.ApplyModifiedProperties();
+            selectableFoldout = EditorGUILayout.Foldout(selectableFoldout, "On selection settings");
+            if (selectableFoldout)
+            {
+                serializedObject.Update();
+                EditorGUILayout.PropertyField(buttonLabelProperty);
+                EditorGUILayout.PropertyField(imageCanvasProperty);
+                EditorGUILayout.PropertyField(glowCanvasProperty);
+                EditorGUILayout.PropertyField(fadeTimeProperty);
+                EditorGUILayout.PropertyField(glowTimeProperty);
+                EditorGUILayout.PropertyField(tweenTypeProperty);
+                EditorGUILayout.PropertyField(selectedSound);
+                EditorGUILayout.PropertyField(pressedSound);
+                EditorGUILayout.Space();
+                serializedObject.ApplyModifiedProperties();
+            }
 
-            base.OnInspectorGUI();
+            defaultFoldout = EditorGUILayout.Foldout(defaultFoldout, "Button settings");
+            if (defaultFoldout)
+            {
+                base.OnInspectorGUI();
+            }
         }
     }
 
     [CustomEditor(typeof(ItemFrame))]
     public class ItemFrameEditor : SelectableButtonEditor
     {
+        private bool itemFrameFoldout = true;
         private SerializedProperty itemImageProperty;
-        private SerializedProperty itemNameProperty;
+        private SerializedProperty inventoryUIProperty;
 
         protected override void OnEnable()
         {
             base.OnEnable();
 
+            inventoryUIProperty = serializedObject.FindProperty("inventoryUI");
             itemImageProperty = serializedObject.FindProperty("itemImage");
-            itemNameProperty = serializedObject.FindProperty("itemName");
         }
 
         public override void OnInspectorGUI()
         {
-            serializedObject.Update();
-            EditorGUILayout.HelpBox("Item frame properties", MessageType.Info);
-            EditorGUILayout.PropertyField(itemImageProperty);
-            EditorGUILayout.PropertyField(itemNameProperty);
-            EditorGUILayout.Space();
-            serializedObject.ApplyModifiedProperties();
-
+            itemFrameFoldout = EditorGUILayout.Foldout(itemFrameFoldout, "Item frame");
+            if (itemFrameFoldout)
+            {
+                serializedObject.Update();
+                EditorGUILayout.PropertyField(inventoryUIProperty);
+                EditorGUILayout.PropertyField(itemImageProperty);
+                EditorGUILayout.Space();
+                serializedObject.ApplyModifiedProperties();
+            }
             base.OnInspectorGUI();
         }
     }

@@ -13,6 +13,7 @@ namespace Edescal
         [Header("References")]
         [SerializeField] private Transform player;
         [SerializeField] private Camera mainCamera;
+        [SerializeField] private CameraControls controls;
 
         [Header("Search settings")]
         [SerializeField] private float targetDistance=7f;
@@ -154,9 +155,9 @@ namespace Edescal
                 return;
             }
 
-            float x = Input.GetAxis("Horizontal");
-            float y = Input.GetAxis("Vertical");
-            Vector2 input = new Vector2(x, y);
+            //float x = Input.GetAxis("Horizontal");
+            //float y = Input.GetAxis("Vertical");
+            Vector2 input = controls.CameraRotation;
             float inputMagnitude = input.sqrMagnitude;
             if (canSwitchTarget && inputMagnitude>0)
             {

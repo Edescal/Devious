@@ -21,23 +21,26 @@ namespace Edescal
             canvasGroup.alpha = 0;
         }
 
+        private void LateUpdate()
+        {
+            if (target == null) return;
+
+            Vector2 position = camera.WorldToScreenPoint(target.transform.position);
+            position.x *= canvas.rect.width / (float)camera.pixelWidth;
+            position.y *= canvas.rect.height / (float)camera.pixelHeight;
+            rect.anchoredPosition = position - canvas.sizeDelta / 2f;
+        }
+
         public void Init()
         {
             LeanTween.cancel(gameObject);
             LeanTween.alphaCanvas(canvasGroup, 1, tweenTime)
                 .setEase(LeanTweenType.easeInSine);
 
-            LeanTween.cancel(glowCanvas.gameObject);
             glowCanvas.alpha = 0;
+            LeanTween.cancel(glowCanvas.gameObject);
             LeanTween.alphaCanvas(glowCanvas, 1, glowTime)
                 .setEase(LeanTweenType.easeInSine)
-                .setOnUpdate((float f)=> {
-                    Vector2 position = camera.WorldToScreenPoint(target.transform.position);
-                    position.x *= canvas.rect.width / (float)camera.pixelWidth;
-                    position.y *= canvas.rect.height / (float)camera.pixelHeight;
-                    rect.anchoredPosition = position - canvas.sizeDelta / 2f;
-
-                })
                 .setLoopPingPong(-1);
         }
 

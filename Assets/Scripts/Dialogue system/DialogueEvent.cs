@@ -56,8 +56,7 @@ namespace Edescal.DialogueSystem
 
         public override void Interact(Interactor interactor)
         {
-            if (currentDialogue == null) return;
-            if (system == null) return;
+            if (currentDialogue == null || system == null) return;
 
             base.Interact(interactor);
             this.interactor = interactor;
@@ -100,11 +99,13 @@ namespace Edescal.DialogueSystem
             {
                 if (events.targetDialogue != currentDialogue) continue;
 
-                index = Mathf.Clamp(index, 0, events.responseEvents.Length - 1);
-
-                print($"Raised {events.responseEvents[index].name}");
-                events.responseEvents[index].responseEvent?.Invoke();
-                break;
+                if (events.responseEvents.Length > 0)
+                {
+                    index = Mathf.Clamp(index, 0, events.responseEvents.Length - 1);
+                    print($"Raised {events.responseEvents[index].name}");
+                    events.responseEvents[index].responseEvent?.Invoke();
+                    break;
+                }
             }
         }
 
@@ -115,7 +116,7 @@ namespace Edescal.DialogueSystem
 
             foreach (var customEvent in dialogueEvents)
             {
-                if (customEvent.targetDialogue == null)
+                if (customEvent.targetDialogue == null || (customEvent.targetDialogue.responseType == ResponseType.NO_OPTIONS && customEvent.responseEvents.Length > 0)) 
                 {
                     customEvent.name = "There's not target dialogue assigned!";
                     customEvent.responseEvents = new ResponseEvent[0];

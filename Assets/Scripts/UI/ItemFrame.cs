@@ -7,10 +7,9 @@ namespace Edescal
 {
     public class ItemFrame : SelectableButton
     {
-        [Header("Item settings")]
-        [SerializeField] private Image itemImage;
-        [SerializeField] private TMP_Text itemName;
         private Item currentItem;
+        [SerializeField] private InventoryUI inventoryUI;
+        [SerializeField] private Image itemImage;
 
         public void SetItem(Item item)
         {
@@ -28,23 +27,14 @@ namespace Edescal
 
         public override void OnSelect(BaseEventData eventData)
         {
-            if (currentItem != null)
-            {
-                itemName.text = currentItem.Name;
-            }
-            else
-            {
-                itemName.text = string.Empty;
-            }
-
+            inventoryUI?.SetSelectedItem(currentItem);
             base.OnSelect(eventData);
         }
-    }
 
-    public class AnimatorManager : MonoBehaviour
-    {
-        private Animator animator;
-
-
+        public override void OnSubmit(BaseEventData eventData)
+        {
+            inventoryUI?.SendItem(currentItem);
+            base.OnSubmit(eventData);
+        }
     }
 }

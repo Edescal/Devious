@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Edescal;
 
 public class OverrideMainCamera : MonoBehaviour
 {
-    public Camera overrideCamera;
-    public float timeToSwapControlls = 0.5f;
-    private ThirdPersonController controller;
+    [SerializeField]
+    private Camera overrideCamera;
+    [SerializeField]
+    private float timeToSwapControlls = 0.5f;
     private WaitForSeconds timeSwap;
 
     private void Start()
@@ -14,15 +16,8 @@ public class OverrideMainCamera : MonoBehaviour
         timeSwap = new WaitForSeconds(timeToSwapControlls);
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void Override(ThirdPersonController controller)
     {
-        if (!other.CompareTag("Player")) return;
-
-        if (controller == null)
-        {
-            controller = other.GetComponent<ThirdPersonController>();
-        }
-
         if (controller == null) return;
 
         StopAllCoroutines();
@@ -35,10 +30,8 @@ public class OverrideMainCamera : MonoBehaviour
         StartCoroutine(OnChange());
     }
 
-    private void OnTriggerExit(Collider other)
+    public void ReturnCamera(ThirdPersonController controller)
     {
-        if (!other.CompareTag("Player")) return;
-
         if (controller == null) return;
 
         StopAllCoroutines();

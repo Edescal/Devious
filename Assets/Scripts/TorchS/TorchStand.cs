@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TorchStand : MonoBehaviour
+public class TorchStand : MonoBehaviour, IDamageable
 {
     [HideInInspector]
     public TorchMaster master;
@@ -14,7 +14,12 @@ public class TorchStand : MonoBehaviour
     {
         if (onFire) return;
         onFire = true;
-        master.Check();
+        master?.Check();
         onFireEvent?.Invoke();
+    }
+
+    public void ApplyDamage(int damage, object source)
+    {
+        LightStand();
     }
 }
