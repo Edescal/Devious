@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6be1e3ce9d1dfca439f605ae63ff2ac4, type: 3}
+  m_Name: Making Peace
+  m_EditorClassIdentifier: 
+  <musicClip>k__BackingField: {fileID: 8300000, guid: c2a1831b98a514f4ab26fa1c2bd4e18d, type: 3}
+  <loopStart>k__BackingField: 16.741
+  <loopEnd>k__BackingField: 32.452

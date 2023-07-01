@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: D_01
   m_EditorClassIdentifier: 
   <dialogues>k__BackingField:
-  - aaaaaaaaaaaaaaaaaaaaaaaa
-  <responseType>k__BackingField: 3
+  - Dialogo uno
+  - Dialogo dos
+  - Dialogo tres
+  <responseType>k__BackingField: 0

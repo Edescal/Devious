@@ -34,9 +34,9 @@ public class Tool : MonoBehaviour
 
         IEnumerator OnUse()
         {
-            inAction = true;
-
             yield return new WaitForSeconds(startHit);
+
+            inAction = true;
 
             var set = new HashSet<IDamageable>();
             float counter = endHit - startHit;
@@ -58,9 +58,9 @@ public class Tool : MonoBehaviour
                 yield return null;
             }
 
-            yield return new WaitForSeconds(toolDuration - startHit - endHit);
-
             inAction = false;
+
+            yield return new WaitForSeconds(toolDuration - startHit - endHit);
         }
 
         StopAllCoroutines();
@@ -69,7 +69,7 @@ public class Tool : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!debug) return;
+        if (!debug || !inAction) return;
 
         hitbox.Debug();
     }

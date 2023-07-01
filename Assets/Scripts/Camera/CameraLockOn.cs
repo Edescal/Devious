@@ -12,8 +12,8 @@ namespace Edescal
     {
         [Header("References")]
         [SerializeField] private Transform player;
-        [SerializeField] private Camera mainCamera;
-        [SerializeField] private CameraControls controls;
+        private CameraInput input;
+        private Camera mainCamera;
 
         [Header("Search settings")]
         [SerializeField] private float targetDistance=7f;
@@ -39,6 +39,23 @@ namespace Edescal
         [SerializeField] private UnityEvent onTargetNotFound;
         [SerializeField] private UnityEvent onTargetCanceled;
 
+        private void OnEnable()
+        {
+            if (mainCamera == null)
+                mainCamera = Camera.main;
+
+            input = GetComponent<CameraInput>();
+
+            if (input == null) return;
+            input.onLock += TryToTarget;
+        }
+
+        private void OnDisable()
+        {
+            if (input == null) return;
+            input.onLock -= TryToTarget;
+        }
+
         private void Update()
         {
             if (targeting)
@@ -62,7 +79,6 @@ namespace Edescal
             audioSource.PlayOneShot(targeting_Cancel);
         }
 
-        private void TryToTarget(InputAction.CallbackContext ctx) => TryToTarget();
         public void TryToTarget()
         {
             if (targeting)
@@ -155,9 +171,7 @@ namespace Edescal
                 return;
             }
 
-            //float x = Input.GetAxis("Horizontal");
-            //float y = Input.GetAxis("Vertical");
-            Vector2 input = controls.CameraRotation;
+            Vector2 input = this.input.Rotation;
             float inputMagnitude = input.sqrMagnitude;
             if (canSwitchTarget && inputMagnitude>0)
             {

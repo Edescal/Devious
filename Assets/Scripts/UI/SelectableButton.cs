@@ -8,27 +8,21 @@ namespace Edescal
     [RequireComponent(typeof(AudioSource))]
     public class SelectableButton : Button
     {
-        [Header("Decoratime image canvas")]
+        [Header("Settings")]
         [SerializeField] private TMP_Text buttonLabel;
-        [SerializeField] private CanvasGroup imageCanvas;
-        [SerializeField] private float fadeTime = 0.3f;
-
-        [Header("Glow FX settings")]
-        [SerializeField] private CanvasGroup glowCanvas;
-        [SerializeField] private float glowTime = 0.7f;
-        [SerializeField] private LeanTweenType tweenType;
+        [SerializeField] private AnimatedImage animatedImage;
 
         [Header("Sound FX")]
         [SerializeField] private AudioClip selectedSound;
         [SerializeField] private AudioClip pressedSound;
+        [SerializeField] private AudioClip hoverSound;
         private AudioSource audioSource;
 
         protected override void Start()
         {
             audioSource = GetComponent<AudioSource>();
             buttonLabel = GetComponentInChildren<TMP_Text>();
-            imageCanvas.alpha = 0;
-            glowCanvas.alpha = 0;
+            animatedImage = GetComponentInChildren<AnimatedImage>();
         }
 
         public void SetLabel(string label)
@@ -38,43 +32,47 @@ namespace Edescal
 
         public override void OnSelect(BaseEventData eventData)
         {
+            animatedImage?.Init();
             base.OnSelect(eventData);
-
-            if (selectedSound != null && this.isActiveAndEnabled)
-            {
-                audioSource.PlayOneShot(selectedSound);
-            }
-
-            LeanTween.cancel(imageCanvas.gameObject);
-            LeanTween.cancel(glowCanvas.gameObject);
-            LeanTween.alphaCanvas(imageCanvas, 1, fadeTime)
-                .setEase(tweenType);
-
-            glowCanvas.alpha = 0;
-            LeanTween.alphaCanvas(glowCanvas, 1, glowTime)
-                .setEase(tweenType).setLoopPingPong();
         }
 
         public override void OnDeselect(BaseEventData eventData)
         {
+            animatedImage?.Stop();
+            if (selectedSound != null && this.isActiveAndEnabled)
+            {
+                audioSource.PlayOneShot(selectedSound);
+            }
             base.OnDeselect(eventData);
-
-            LeanTween.cancel(imageCanvas.gameObject);
-            LeanTween.cancel(glowCanvas.gameObject);
-            LeanTween.alphaCanvas(imageCanvas, 0, fadeTime)
-                .setEase(tweenType);
-            LeanTween.alphaCanvas(glowCanvas, 0, fadeTime)
-                .setEase(tweenType);
         }
 
         public override void OnPointerClick(PointerEventData eventData)
         {
-            if (this.interactable && pressedSound != null)
+            if (eventData.button == PointerEventData.InputButton.Left)
             {
-                audioSource.PlayOneShot(pressedSound);
+                if (interactable && pressedSound != null)
+                {
+                    audioSource.PlayOneShot(pressedSound);
+                }
+                base.OnPointerClick(eventData);
+            }
+            else
+            {
+                Select();
             }
 
-            base.OnPointerClick(eventData);
+        }
+
+        public override void OnPointerEnter(PointerEventData eventData)
+        {
+            if (EventSystem.current.currentSelectedGameObject == gameObject) return;
+
+            if (interactable && hoverSound != null)
+            {
+                audioSource.PlayOneShot(hoverSound);
+            }
+
+            base.OnPointerEnter(eventData);
         }
 
         public override void OnSubmit(BaseEventData eventData)

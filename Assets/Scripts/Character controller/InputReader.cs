@@ -6,6 +6,7 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ICam
 {
     public Vector2 Movement { get; private set; }
     public event Action onInteracted;
+    public event Action onJump;
     public event Action onUseItem;
     public bool Sprint { get; private set; }
     public bool Autosprint { get; private set; }
@@ -18,6 +19,8 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ICam
 
     private Controls controls;
 
+    public Controls.UIActions UI => controls.UI;
+
     private void OnEnable()
     {
         if(controls == null)
@@ -28,6 +31,7 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ICam
         controls.Player.Enable();
         controls.Camera.SetCallbacks(this);
         controls.Camera.Enable();
+
         controls.UI.Enable();
     }
 
@@ -99,6 +103,11 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ICam
         {
             onUseItem?.Invoke();
         }
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        onJump?.Invoke();
     }
 
     //ICameraActions

@@ -7,7 +7,7 @@ namespace Edescal
     {
         public ThirdPersonCamera thirdPersonCamera;
         public CameraLockOn cameraLockOn;
-        public CameraControls cameraControls;
+        public CameraInput cameraControls;
         public InputReader input;
         public float distance = 1;
 
@@ -19,15 +19,16 @@ namespace Edescal
                 || input == null)
             {
                 Debug.Break();
+                print("Cant focus to dialogue");
             }
         }
 
 
         public void Focus(LockOnTarget target)
         {
+            cameraLockOn.CancelTargeting();
             thirdPersonCamera.SetTarget(target);
             thirdPersonCamera.SetCameraDistance(distance);
-            cameraLockOn.CancelTargeting();
             cameraControls.Disable();
             input.SwitchUI(true);
         }

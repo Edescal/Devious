@@ -12,12 +12,13 @@ namespace Edescal.DialogueSystem
         public bool isWaiting { get; private set; }
         public int selectedResponseIndex { get; private set; }
 
+        [SerializeField] private RectTransform buttonContainer;
+        [SerializeField] private GameObject buttonPrefab;
         [SerializeField] private CanvasGroup responseCanvas;
         [SerializeField] private TMP_Text responseLabel;
         [SerializeField] private float fadeTime = 0.3f;
-        [Space(10)]
-        [SerializeField] 
-        private Button[] responseBtns; /* { "Sí", "Cancelar", "No" } */
+        private SelectableButton[] responseBtns;
+        private GameObject[] buttons;
         private Coroutine coroutine;
 
         private void Start()
@@ -26,73 +27,97 @@ namespace Edescal.DialogueSystem
             responseCanvas.alpha = 0;
             selectedResponseIndex = -1;
             isWaiting = false;
-
-            for (int i = 0; i < responseBtns.Length; i++)
+            responseBtns = new SelectableButton[3];
+            buttons = new GameObject[3];
+            for(int i = 0; i < 3; i++)
             {
-                int index = i;
-                responseBtns[index].interactable = false;
-                responseBtns[index].onClick.AddListener(() =>
+                buttons[i] = Instantiate(buttonPrefab, buttonContainer);
+                if (buttons[i] == null)
                 {
-                    selectedResponseIndex = index;
-                    isWaiting = false;
-                });
+                    Debug.LogError($"Response button #{i} could'n be instantiated correctly.");
+                    continue;
+                }
 
+                responseBtns[i] = buttons[i].GetComponentInChildren<SelectableButton>();
+                if (responseBtns[i] != null)
+                {
+                    int index = i;
+                    responseBtns[index].interactable = false;
+                    responseBtns[index].onClick.AddListener(() =>
+                    {
+                        selectedResponseIndex = index;
+                        isWaiting = false;
+                    });
+                }
             }
         }
 
-        public void Show(ResponseType responseType, string message)
+        public void Show(ResponseType responseType, DialogueEvent dialogue)
         {
             if (responseType == ResponseType.NO_OPTIONS) return;
 
-            responseLabel.text = message;
+            responseLabel.text = dialogue.currentResponseMessage;
             selectedResponseIndex = -1;
             isWaiting = true;
 
-            Action<Button, bool> act = (btn, b) =>
+            foreach (var go in buttons)
+                go.SetActive(false);
+
+            var respEvts = dialogue.GetResponseEvent(dialogue.currentDialogue);
+            var strings = new string[] { "A", "B", "C" };
+            if (respEvts != null)
             {
-                btn.interactable = b;
-                btn.gameObject.SetActive(b);
+                for (int i = 0; i < respEvts.Length; i++)
+                    strings[i] = respEvts[i].name;
+            }
+
+            Action<int> Set = (n) =>
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    responseBtns[i].interactable = false;
+                    responseBtns[i].gameObject.SetActive(true);
+                    responseBtns[i].SetLabel(strings[i]);
+                }
             };
 
             switch (responseType)
             {
                 case ResponseType.OK:
-                    act(responseBtns[0], true);
-                    act(responseBtns[1], false);
-                    act(responseBtns[2], false);
+                    Set(1);
                     break;
                 case ResponseType.OK_CANCEL:
-                    act(responseBtns[0], true);
-                    act(responseBtns[1], false);
-                    act(responseBtns[2], true);
-
+                    Set(2);
                     break;
                 case ResponseType.YES_NO_CANCEL:
-                    act(responseBtns[0], true);
-                    act(responseBtns[1], true);
-                    act(responseBtns[2], true);
+                    Set(3);
                     break;
             }
 
             LeanTween.cancel(responseCanvas.gameObject);
             LeanTween.alphaCanvas(responseCanvas, 1, fadeTime)
-                .setEase(LeanTweenType.easeInSine);
-
-            if(coroutine != null)
-            {
-                StopCoroutine(coroutine);
-                coroutine = null;
-            }
-            coroutine = StartCoroutine(WaitForResponse());
+                .setEase(LeanTweenType.easeInSine)
+                .setOnComplete(() =>
+                {
+                    foreach (var r in responseBtns)
+                    {
+                        if (r.isActiveAndEnabled)
+                            r.interactable = true;
+                    }
+                    if (coroutine != null)
+                    {
+                        StopCoroutine(coroutine);
+                        coroutine = null;
+                    }
+                    coroutine = StartCoroutine(WaitForResponse());
+                });
         }
 
         public void Hide()
         {
             foreach(var btn in responseBtns)
-            {
                 btn.interactable = false;
-            }
-
+            
             LeanTween.cancel(responseCanvas.gameObject);
             LeanTween.alphaCanvas(responseCanvas, 0, fadeTime)
                 .setEase(LeanTweenType.easeInSine);

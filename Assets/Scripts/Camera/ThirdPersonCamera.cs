@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Edescal
 {
-    [RequireComponent(typeof(CameraControls))]
+    [RequireComponent(typeof(CameraInput))]
     public class ThirdPersonCamera : MonoBehaviour
     {
         [field:SerializeField, Tooltip("Enable/Disable input")]
@@ -15,7 +15,7 @@ namespace Edescal
         private Transform mainCamera;
         [SerializeField]
         private Transform player;
-        CameraControls input;
+        private CameraInput input;
 
         [Header("Camera controller settings")]
         [Range(0f, 0.3f), SerializeField]
@@ -62,42 +62,40 @@ namespace Edescal
 
         private void Start()
         {
-            input = GetComponent<CameraControls>();
+            input = GetComponent<CameraInput>();
             SetRotation(transform.rotation);
+            ResetPosition();
         }
 
         private void OnValidate()
         {
-            if(zoomRange.x < 0)
-            {
-                zoomRange.x = 0;
-            }
-            else if(zoomRange.x > zoomRange.y)
-            {
-                zoomRange.y = zoomRange.x;
-            }
-            else if (zoomRange.y < zoomRange.x)
-            {
-                zoomRange.y = zoomRange.x;
-            }
-            else if(zoomRange.y > 10)
-            {
-                zoomRange.y = 10;
-            }
+            ResetPosition();
 
+            if (zoomRange.x < 0)
+                zoomRange.x = 0;
+            else if(zoomRange.x > zoomRange.y)
+                zoomRange.y = zoomRange.x;
+            else if (zoomRange.y < zoomRange.x)
+                zoomRange.y = zoomRange.x;
+            else if(zoomRange.y > 10)
+                zoomRange.y = 10;
+            
             cameraDistance = Mathf.Clamp(cameraDistance, zoomRange.x, zoomRange.y);
             mainCamera.localPosition = new Vector3(0, 0, -cameraDistance);
         }
 
         private void LateUpdate()
         {
+            if (Time.timeScale == 0) return;
+
             var followTarget = target != null ? (player.position + target.transform.position) / 2f : player.position;
             transform.position = Vector3.SmoothDamp(transform.position, followTarget, ref cam_velocity, cameraSmoothness);
 
+            //Rotation: Manual / Auto
             if (target == null && !readjusting)
             {
-                float x = input.CameraRotation.x;
-                float y = input.CameraRotation.y;
+                float x = input.Rotation.x;
+                float y = input.Rotation.y;
 
                 float ref_x_damp = 0, ref_y_damp = 0;
                 x_damp = Mathf.SmoothDamp(x_damp, CanMove ? x : 0, ref ref_x_damp, acceleration);
@@ -124,7 +122,7 @@ namespace Edescal
 
             //Zoom
             float ref_zoom = 0;
-            float zoomValue = input.ZoomValue;
+            float zoomValue = input.Zoom;
 
             zoom_damp = Mathf.SmoothDamp(zoom_damp, zoomValue, ref ref_zoom, acceleration);
             cameraDistance += zoom_damp * zoomSensitivity * Time.deltaTime;
@@ -138,9 +136,9 @@ namespace Edescal
             if (Physics.SphereCast(transform.position + (transform.forward * cameraCollisionRadius), cameraCollisionRadius, -transform.forward, out var hit, cameraDistance, ~ignoreCollisionMask, QueryTriggerInteraction.Ignore))
             {
                 finalDistance = Vector3.Distance(transform.position, hit.point);
+                finalDistance -= collisionOffsetValue;
             }
 
-            finalDistance -= collisionOffsetValue;
             if (-finalDistance > -minDistanceToPlayer)
             {
                 finalDistance = minDistanceToPlayer;
@@ -203,6 +201,8 @@ namespace Edescal
 
         public void ResetPosition()
         {
+            if (player == null) return;
+
             transform.position = player.position;
             SetRotation(player);
         }
@@ -221,16 +221,8 @@ namespace Edescal
 
         public void SetRotation(Transform transform)
         {
-            var rotateForward = Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward, Vector3.up)) * Quaternion.Euler(new Vector3(20, 0, 0));
-            SetRotation(rotateForward);
-        }
-
-        public void SetTarget(Transform t)
-        {
-            if(t.TryGetComponent<LockOnTarget>(out var target))
-            {
-                SetTarget(target);
-            }
+            var transformForward = Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward, Vector3.up)) * Quaternion.Euler(new Vector3(20, 0, 0));
+            SetRotation(transformForward);
         }
 
         public void SetTarget(LockOnTarget target)
@@ -251,7 +243,7 @@ namespace Edescal
             IEnumerator OnReadjust()
             {
                 readjusting = true;
-                var forwardRot = Quaternion.LookRotation(player.forward, Vector3.up) * Quaternion.Euler(new Vector3(20, 0, 0));
+                var forwardRot = Quaternion.LookRotation(player.forward, Vector3.up) * Quaternion.Euler(new Vector3(transform.eulerAngles.x, 0, 0));
                 while(Quaternion.Angle(transform.rotation, forwardRot) > 0.1f)
                 {
                     if (!readjusting) yield break;

@@ -6,36 +6,39 @@ namespace Edescal.DialogueSystem
 {
     public class DialogueEvent : Interactable
     {
-        [SerializeField]
-        private UnityEvent onDialogueEnd;
-
-        [field: Header("Settings"), SerializeField]
-        public Dialogue currentDialogue { get; set; }
-        [SerializeField]
         private DialogueSystem system;
         private Interactor interactor;
 
-        [Header("Event handling"), SerializeField]
-        private DialogueEventWrapper[] dialogueEvents;
-        
         [System.Serializable]
         private class DialogueEventWrapper
         {
             [HideInInspector]
             public string name;
-            [Header("Raising events when dialogue has ended")]
+            [Header("Set dialogue:")]
             public Dialogue targetDialogue;
-            public UnityEvent customEvent;
-
-            [Header("Set custom event for each target dialogue response")]
+            [Space(10)]
+            public UnityEvent onDialogueEnded;
+            [Header("Set response events:")]
             public string responseMessage;
             public ResponseEvent[] responseEvents;
         }
 
+        [SerializeField]
+        private UnityEvent onDialogueEnd;
+        [SerializeField]
+        private bool triggerAtStart;
+        [field: SerializeField]
+        public Dialogue currentDialogue { get; set; }
+        [field: SerializeField]
+        public Punctuation Punctuation { get; set; }
+
+
+        [Header("Event handling"), SerializeField]
+        private DialogueEventWrapper[] dialogueEvents;
+
         [System.Serializable]
         public class ResponseEvent
         {
-            [HideInInspector]
             public string name;
             public UnityEvent responseEvent;
         }
@@ -54,25 +57,44 @@ namespace Edescal.DialogueSystem
             }
         }
 
+        public ResponseEvent[] GetResponseEvent(Dialogue target)
+        {
+            ResponseEvent[] res=null;
+            foreach(var evt in dialogueEvents)
+            {
+                if (evt.targetDialogue == target)
+                {
+                    res = evt.responseEvents;
+                    break;
+                }
+            }
+            return res;
+        }
+
         public override void Interact(Interactor interactor)
         {
             if (currentDialogue == null || system == null) return;
 
             base.Interact(interactor);
             this.interactor = interactor;
-            if(interactor.TryGetComponent<InputReader>(out var controls))
+            if (interactor != null)
             {
-                controls.SwitchUI(true);
+                if (interactor.TryGetComponent<InputReader>(out var controls))
+                {
+                    controls.SwitchUI(true);
+                }
             }
-
             system.InitDialogue(this);
         }
 
         public void DialogueStatus(bool success)
         {
-            if (interactor.TryGetComponent<InputReader>(out var controls))
+            if (interactor != null)
             {
-                controls.SwitchUI(false);
+                if (interactor.TryGetComponent<InputReader>(out var controls))
+                {
+                    controls.SwitchUI(false);
+                }
             }
 
             if (success && dialogueEvents != null && dialogueEvents.Length > 0)
@@ -82,7 +104,7 @@ namespace Edescal.DialogueSystem
                     if (events.targetDialogue == currentDialogue)
                     {
                         print($"Raised custom events for {currentDialogue.name}");
-                        events.customEvent?.Invoke();
+                        events.onDialogueEnded?.Invoke();
                         break;
                     }
                 }
@@ -109,51 +131,68 @@ namespace Edescal.DialogueSystem
             }
         }
 
+        private void Start()
+        {
+            if (triggerAtStart)
+            {
+                Interact(null);
+            }
+        }
+
         private void OnValidate()
         {
-            if (dialogueEvents == null) return;
+            if (system == null)
+            {
+                system = GameObject.FindObjectOfType<DialogueSystem>();
+            }
+
             if (dialogueEvents.Length == 0) return;
 
             foreach (var customEvent in dialogueEvents)
             {
-                if (customEvent.targetDialogue == null || (customEvent.targetDialogue.responseType == ResponseType.NO_OPTIONS && customEvent.responseEvents.Length > 0)) 
+                //Si no tiene diálogo asignado
+                if (customEvent.targetDialogue == null) 
                 {
                     customEvent.name = "There's not target dialogue assigned!";
-                    customEvent.responseEvents = new ResponseEvent[0];
+                    customEvent.responseEvents = System.Array.Empty<ResponseEvent>();
                     continue;
                 }
-                customEvent.name = $"Custom events for target: {customEvent.targetDialogue.name}";
 
+                //Si el diálogo explícitamente no puede tener respuestas
+                if (customEvent.targetDialogue.responseType == ResponseType.NO_OPTIONS && customEvent.responseEvents.Length > 0)
+                {
+                    customEvent.name = $"Dialogue {customEvent.targetDialogue.name} doesn't accept responses!";
+                    customEvent.responseEvents = System.Array.Empty<ResponseEvent>();
+                    continue;
+                }
 
+                //En otro caso...
+                customEvent.name = $"Custom events - {customEvent.targetDialogue.name}";
                 switch (customEvent.targetDialogue.responseType)
                 {
                     case ResponseType.OK:
-                        if (customEvent.responseEvents.Length == 1) continue;
-
-                        customEvent.responseEvents = new ResponseEvent[] { new ResponseEvent() };
-                        customEvent.responseEvents[0].name = $"OK response for {customEvent.targetDialogue.name}";
+                        if (customEvent.responseEvents.Length != 1)
+                        {
+                            customEvent.responseEvents = new ResponseEvent[] { new ResponseEvent() };
+                            customEvent.responseEvents[0].name = $"OK response for {customEvent.targetDialogue.name}";
+                        }
                         break;
                     case ResponseType.OK_CANCEL:
-                        if (customEvent.responseEvents.Length == 2) continue;
-
-                        customEvent.responseEvents = new ResponseEvent[] { new ResponseEvent(), new ResponseEvent() };
-                        customEvent.responseEvents[0].name = $"OK response for {customEvent.targetDialogue.name}";
-                        customEvent.responseEvents[1].name = $"CANCEL response for {customEvent.targetDialogue.name}";
+                        if (customEvent.responseEvents.Length != 2)
+                        {
+                            customEvent.responseEvents = new ResponseEvent[] { new ResponseEvent(), new ResponseEvent() };
+                            customEvent.responseEvents[0].name = $"OK response for {customEvent.targetDialogue.name}";
+                            customEvent.responseEvents[1].name = $"CANCEL response for {customEvent.targetDialogue.name}";
+                        }
                         break;
                     case ResponseType.YES_NO_CANCEL:
-                        if (customEvent.responseEvents.Length == 3) continue;
-
-                        customEvent.responseEvents = new ResponseEvent[] { new ResponseEvent(), new ResponseEvent(), new ResponseEvent() };
-                        customEvent.responseEvents[0].name = $"YES response for {customEvent.targetDialogue.name}";
-                        customEvent.responseEvents[1].name = $"CANCEL response for {customEvent.targetDialogue.name}"; customEvent.responseEvents[0].name = $"OK response for {customEvent.targetDialogue.name}";
-                        customEvent.responseEvents[2].name = $"NO response for {customEvent.targetDialogue.name}";
-                        break;
-                    default:
-                        if(customEvent.responseEvents.Length > 0)
+                        if (customEvent.responseEvents.Length != 3)
                         {
-                            customEvent.responseEvents = System.Array.Empty<ResponseEvent>();
+                            customEvent.responseEvents = new ResponseEvent[] { new ResponseEvent(), new ResponseEvent(), new ResponseEvent() };
+                            customEvent.responseEvents[0].name = $"YES response for {customEvent.targetDialogue.name}";
+                            customEvent.responseEvents[1].name = $"CANCEL response for {customEvent.targetDialogue.name}"; customEvent.responseEvents[0].name = $"OK response for {customEvent.targetDialogue.name}";
+                            customEvent.responseEvents[2].name = $"NO response for {customEvent.targetDialogue.name}";
                         }
-                        customEvent.responseMessage = $"{customEvent.targetDialogue.name} has no responses.";
                         break;
                 }
             }

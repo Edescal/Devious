@@ -13,20 +13,18 @@ namespace Edescal.DialogueSystem
 
         [Space(-10), Header("-> Settings:")]
         [SerializeField] private TMP_Text UIText;
-        [SerializeField] private Punctuation punctuationData;
+        [SerializeField] private Punctuation defaultPunctuation;
         [SerializeField] private float timeBetweenChars = 0.03f;
         [SerializeField] private float fasterTimeBtwnChars = 0.005f;
 
         private Coroutine coroutine;
 
-        public void Start(string text, MonoBehaviour mono)
+        public void Start(string text, Punctuation punctuation, MonoBehaviour mono)
         {
             if (isRunning) return;
             isRunning = true;
-
             Reset(mono);
-
-            coroutine = mono.StartCoroutine(TypingCoroutine(text));
+            coroutine = mono.StartCoroutine(TypingCoroutine(text, punctuation));
         }
 
         public void Reset(MonoBehaviour mono)
@@ -41,7 +39,7 @@ namespace Edescal.DialogueSystem
             }
         }
 
-        private IEnumerator TypingCoroutine(string text)
+        private IEnumerator TypingCoroutine(string text, Punctuation punctuation)
         {
             UIText.text = text;
             UIText.maxVisibleCharacters = 0;
@@ -63,7 +61,11 @@ namespace Edescal.DialogueSystem
                     char nextChar = info.characterInfo[counter + 1].character;
 
                     //Check for punctuation
-                    bool shouldPause = CheckPunctuation(character, nextChar, out float time);
+                    float time;
+                    bool shouldPause = punctuation == null ?
+                        CheckPunctuation(character, nextChar, out time, defaultPunctuation) :
+                        CheckPunctuation(character, nextChar, out time, punctuation);
+
                     if (shouldPause)
                     {
                         var pause = new WaitForSeconds(time);
@@ -91,16 +93,17 @@ namespace Edescal.DialogueSystem
             coroutine = null;
         }
 
-        private bool CheckPunctuation(char character, char nextChar, out float timeValue)
+        private bool CheckPunctuation(char character, char nextChar, out float timeValue, Punctuation punctuation = null)
         {
-            if (punctuationData != null)
+            if (punctuation != null)
             {
-                bool current = punctuationData.ContainsChar(character, out var value) == true;
-                bool next = punctuationData?.ContainsChar(nextChar, out _) == true;
+                float value = 0f;
+                bool current = punctuation?.ContainsChar(character, out value) == true;
+                bool next = punctuation?.ContainsChar(nextChar, out _) == true;
                 //Si el siguiente char es el mismo no se toma en cuenta la pausa ...
                 if (current && !next)
                 {
-                    timeValue = value;
+                    timeValue = !isPressingFaster ? value : value / 2f;
                     return true;
                 }
             }

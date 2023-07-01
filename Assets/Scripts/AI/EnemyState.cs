@@ -20,27 +20,35 @@ namespace Edescal.AI
 
         public override void OnEnter()
         {
-
         }
 
         public override void OnExit()
         {
-
         }
 
         public override void Tick()
         {
-            if (machine.DistanceToPlayer >= machine.maxDistanceToPlayer) return;
+            if (machine.DistanceToPlayer >= machine.maxDistanceToPlayer)
+            {
+                machine.turnToPlayer = false;
+                return;
+            }
 
-            if (!machine.CanSeePlayer) return;
+            if (!machine.CanSeePlayer)
+            {
+                machine.turnToPlayer = false;
+                return;
+            }
 
             if (machine.chasePlayer)
             {
+                machine.turnToPlayer = false;
                 machine.SwitchState(new ChaseState(machine));
             }
             else
             {
-                machine.RotateToPlayer();
+                machine.turnToPlayer = true;
+                //machine.RotateToPlayer();
             }
         }
     }

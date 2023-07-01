@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine.AI;
+using UnityEngine.Animations.Rigging;
 using UnityEngine;
 
 namespace Edescal.AI
@@ -18,18 +19,25 @@ namespace Edescal.AI
         [field: SerializeField]
         public Transform player { get; private set; }
         [field: SerializeField]
+        public bool turnToPlayer { get; set; }
+        [field: SerializeField]
         public bool chasePlayer { get; set; }
         [field: SerializeField]
         public float speedParam { get; private set; } = 3f;
 
+        [SerializeField]
+        private Rig rig;
         [SerializeField]
         private float fieldOfVision = 60f;
         [SerializeField]
         private LayerMask obstacleMask;
         [SerializeField]
         private float rotationSpeed = 10f;
+        [SerializeField]
+        private float turnHeadTime = 0.3f;
         
         private EnemyState currentState;
+        private float ref_vel = 0f;
 
         public void ApplyDamage(int damage, object source)
         {
@@ -73,7 +81,6 @@ namespace Edescal.AI
             {
                 var direction = Vector3.ProjectOnPlane((player.position - transform.position).normalized, Vector3.up);
                 float dot = Vector3.Dot(direction, transform.forward);
-                print($"{dot}   {Mathf.Cos(Mathf.Deg2Rad * fieldOfVision / 2)}");
                 if (dot > Mathf.Cos(Mathf.Deg2Rad * fieldOfVision / 2))
                 {
                     var offset = Vector3.up * 1;
@@ -104,10 +111,46 @@ namespace Edescal.AI
 
         void Update()
         {
+            if (rig != null)
+            {
+                if (turnToPlayer)
+                {
+                    rig.weight = Mathf.SmoothDamp(rig.weight, 1, ref ref_vel, turnHeadTime);
+                }
+                else
+                {
+                    rig.weight = Mathf.SmoothDamp(rig.weight, 0, ref ref_vel, turnHeadTime);
+                }
+            }
+
             if (currentState != null)
             {
                 currentState.Tick();
             }
+        }
+
+        public void RotateToTarget(Transform target) => RotateToTarget(target, 0.25f);
+        public void RotateToTarget(Transform target, float time)
+        {
+            IEnumerator Rotate()
+            {
+                var direction = Vector3.ProjectOnPlane(target.position - transform.position, Vector3.up);
+                var originalRot = transform.rotation;
+                var targetRot = Quaternion.LookRotation(direction);
+
+                float timer = time;
+                while(timer > 0)
+                {
+                    float t = 1 - (timer / time);
+                    t = Mathf.Clamp(t, 0, 1);
+                    transform.rotation = Quaternion.Lerp(originalRot, targetRot, t);
+                    timer -= Time.deltaTime;
+                    yield return null;
+                }
+
+                transform.rotation = targetRot;
+            }
+            StartCoroutine(Rotate());
         }
     }
 

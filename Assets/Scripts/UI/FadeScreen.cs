@@ -13,11 +13,16 @@ public class FadeScreen : MonoBehaviour
     private float fadeTime = 0.75f;
 
     [ContextMenu("Show")]
-    public void Show()
+    public void Show(out float time)
     {
-        if (fading) return;
-        fading = true;
+        if (fading)
+        {
+            time = 0;
+            return;
+        }
 
+        fading = true;
+        time = fadeTime;
         LeanTween.alphaCanvas(canvasGroup, 1, fadeTime)
             .setEase(LeanTweenType.easeInOutSine)
             .setIgnoreTimeScale(true)
@@ -28,14 +33,20 @@ public class FadeScreen : MonoBehaviour
     }
 
     [ContextMenu("Hide")]
-    public void Hide()
+    public void Hide(out float time)
     {
-        if (fading) return;
-        fading = true;
+        if (fading)
+        {
+            time = 0;
+            return;
+        }
 
+        fading = true;
+        time = fadeTime;
         LeanTween.alphaCanvas(canvasGroup, 0, fadeTime)
             .setEase(LeanTweenType.easeInOutSine)
             .setIgnoreTimeScale(true)
+            .setOnUpdate((float f) => print("Fading"))
             .setOnComplete(() =>
             {
                 fading = false;

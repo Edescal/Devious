@@ -22,7 +22,7 @@ namespace Edescal.DialogueSystem
         [SerializeField] private float timeToEnd = 1f;
 
         [Header("Input binding")]
-        [SerializeField] private InputActionReference submit;
+        [SerializeField] private InputReader input;
 
         [Header("Sound FX")]
         [SerializeField] private AudioSource audioSource;
@@ -31,7 +31,7 @@ namespace Edescal.DialogueSystem
         [SerializeField] private AudioClip stopDialogue;
         private Coroutine coroutine, secondaryCo;
 
-        private void Start()
+        private void Awake()
         {
             StopDialogue();
             secondaryCo = null;
@@ -42,7 +42,6 @@ namespace Edescal.DialogueSystem
             if (isRunning) return;
             isRunning = true;
             abort = false;
-            submit.action.Enable();
 
             typingMachine.Reset(this);
             
@@ -63,7 +62,6 @@ namespace Edescal.DialogueSystem
 
         public void StopDialogue()
         {
-            submit.action.Disable();
             isRunning = false;
             abort = false;
 
@@ -94,10 +92,10 @@ namespace Edescal.DialogueSystem
                 bool isLastLine = i == dialogueTexts.Length - 1;
                 yield return waitBetween;
 
-                var routine = CheckCurrentLine(dialogueTexts[i], isLastLine);
+                var routine = CheckCurrentLine(dialogueTexts[i], dialogueEvent.Punctuation, isLastLine);
                 yield return routine;
 
-                var waitInput = CheckForInput(isLastLine && dialogue.responseType != ResponseType.NO_OPTIONS);
+                var waitInput = CheckForInput(isLastLine);
                 yield return waitInput;
             }
             
@@ -107,7 +105,7 @@ namespace Edescal.DialogueSystem
             if (dialogue.responseType != ResponseType.NO_OPTIONS)
             {
                 yield return waitBeforeResponses;
-                responseBox.Show(dialogue.responseType, dialogueEvent.currentResponseMessage);
+                responseBox.Show(dialogue.responseType, dialogueEvent);
                 while (responseBox.isWaiting)
                 {
                     yield return null;
@@ -119,13 +117,13 @@ namespace Edescal.DialogueSystem
             StopDialogue();
         }
 
-        private IEnumerator CheckCurrentLine(string text, bool isLast)
+        private IEnumerator CheckCurrentLine(string text, Punctuation data, bool isLast)
         {
-            typingMachine.Start(text, this);
+            typingMachine.Start(text, data, this);
 
             while (typingMachine.isRunning)
             {
-                typingMachine.isPressingFaster = submit.action.IsPressed();
+                typingMachine.isPressingFaster = input.UI.Submit.IsPressed();
                 yield return null;
             }
 
@@ -139,12 +137,15 @@ namespace Edescal.DialogueSystem
         private IEnumerator CheckForInput(bool isLast)
         {
             dialogueBox.ShowIcon(isLast);
+            var wait = new WaitForSeconds(dialogueBox.FadeTime);
+            yield return wait;
+
             //mostrar icono de input
             bool pressedInput = false;
             while (!pressedInput)
             {
                 yield return null;
-                if (submit.action.WasPerformedThisFrame())
+                if (input.UI.Submit.WasPerformedThisFrame())
                 {
                     pressedInput = true;
                     if (audioSource != null && dialogueInput != null)
@@ -153,6 +154,8 @@ namespace Edescal.DialogueSystem
             }
             //quitar icono de input
             dialogueBox.HideIcon();
+            wait = new WaitForSeconds(dialogueBox.FadeTime);
+            yield return wait;
         }
     
         private IEnumerator CheckForAbort(DialogueEvent @event)
@@ -171,7 +174,12 @@ namespace Edescal.DialogueSystem
                     yield break;
                 }
             }
-            @event.ResponseStatus(responseBox.selectedResponseIndex);
+
+            if (@event.currentDialogue.responseType != ResponseType.NO_OPTIONS)
+            {
+                @event.ResponseStatus(responseBox.selectedResponseIndex);
+            }
+
             @event.DialogueStatus(true);
         }
     }

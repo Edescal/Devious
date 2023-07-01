@@ -10,34 +10,23 @@ namespace Edescal
         public bool CanMove { get; set; } = true;
         public Transform OverrideCamera { get; set; }
 
-        public Vector3 SetPosition
+        public Vector3 Position
         {
             get => transform.position;
             set
             {
-                if (CanMove)
-                {
-                    Debug.Log("Tried to override controller's position. That's only possible when CanMove is false.");
-                    return;
-                }
                 controller.enabled = false;
                 transform.position = value;
                 controller.enabled = true;
-                isFalling = false;
-                fallingCounter = 0;
+                Debug.Log($"Set new position... {value}");
             }
         }
 
-        public Quaternion SetRotation
+        public Quaternion Rotation
         {
             get => transform.rotation;
             set
             {
-                if (CanMove)
-                {
-                    Debug.Log("Tried to override controller's position. That's only possible when CanMove is false.");
-                    return;
-                }
                 transform.rotation = value;
             }
         }
@@ -72,6 +61,12 @@ namespace Edescal
         bool isFalling = false;
         bool isGrounded;
 
+        [Header("Jumping")]
+        public bool jumping = false;
+        public float jumpStart = 0.3f;
+        public float jumpForce = 5;
+        public float airVelocityFriction = 3f;
+
         bool Falling
         {
             get => isFalling;
@@ -79,7 +74,6 @@ namespace Edescal
             {
                 if (value && !isFalling)
                 {
-                    inputMultiplier = 0;
                     isFalling = value;
                     animator.SetBool("falling", true);
                 }
@@ -91,20 +85,10 @@ namespace Edescal
                     
                     IEnumerator OnLanding()
                     {
-                        if(player != null)
-                        {
-                            int damage = fallingCounter > 1.5f ? 3
-                                : fallingCounter > 1.25f ? 2
-                                : fallingCounter > 1 ? 1 : 0;
-
-                            if(damage != 0)
-                            {
-                                player.ApplyDamage(damage, this);
-                            }
-                        }
                         var time = new WaitForSeconds(landingTime);
                         yield return time;
                         CanMove = true;
+                        jumping = false;
                     }
                     StartCoroutine(OnLanding());
                 }
@@ -114,13 +98,15 @@ namespace Edescal
         public void SetTarget(LockOnTarget target) => lockOnTarget = target;
         public void UnsetTarget() => lockOnTarget = null;
 
-        void Start()
+        void Awake()
         {
             player = GetComponent<IEntity>();
             mainCamera = Camera.main.transform;
             controls = GetComponent<InputReader>();
             controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
+
+            controls.onJump += Jump;
         }
 
         void Update()
@@ -130,15 +116,17 @@ namespace Edescal
             HandleGravity();
 
             var direction = InputToForward(controls.Movement);
-            if (lockOnTarget != null)
+            if (CanMove)
             {
-                var localVector = transform.InverseTransformDirection(direction);
-                localVector.x = Mathf.Round(localVector.x * 100) / 100;
-                localVector.z = Mathf.Round(localVector.z * 100) / 100;
-
-                if (Mathf.Abs(localVector.z) >= Mathf.Abs(localVector.x))
-                    direction = transform.TransformDirection(new Vector3(0, 0, Mathf.Sign(localVector.z)));
-                else direction = transform.TransformDirection(new Vector3(Mathf.Sign(localVector.x), 0, 0));
+                if (lockOnTarget != null && !jumping)
+                {
+                    RotateToTarget();
+                }
+                else if (direction != Vector3.zero && controls.Movement != Vector2.zero)
+                {
+                    var lookRotation = Quaternion.LookRotation(direction);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotSpeed * Time.deltaTime);
+                }
             }
 
             direction = SlopeCheck(direction);
@@ -146,32 +134,30 @@ namespace Edescal
             float speed = sprint ? sprintinSpeed : walkingSpeed;
 
             float currentVelocity = 0;
-            bool stop = !CanMove || controls.Movement == Vector2.zero || Falling;
+            bool stop = !CanMove || controls.Movement == Vector2.zero;
 
-            inputMultiplier = Mathf.SmoothDamp(inputMultiplier, stop ? 0 : 1, ref currentVelocity, acceleration);
-            currentSpeed = Mathf.SmoothDamp(currentSpeed, stop ? 0 : speed, ref currentVelocity, 0.1f);
+            if (!jumping && isGrounded)
+            {
+                inputMultiplier = Mathf.SmoothDamp(inputMultiplier, stop ? 0 : 1, ref currentVelocity, acceleration);
+            }
 
-            var movement = (direction * currentSpeed) * inputMultiplier;
-
+            Vector3 movement;
+            if (Falling)
+            {
+                currentSpeed -= airVelocityFriction * Time.deltaTime;
+                if (currentSpeed < 0)
+                    currentSpeed = 0;
+                movement = direction * currentSpeed;
+            }
+            else
+            {
+                currentSpeed = Mathf.SmoothDamp(currentSpeed, stop ? 0 : speed, ref currentVelocity, 0.1f);
+                movement = (direction * currentSpeed) * inputMultiplier;
+            }
+            
             var gravity = Vector3.up * verticalSpeed;
             var velocity = gravity + movement;
             controller.Move(velocity * Time.deltaTime);
-
-            if (CanMove && !Falling)
-            {
-                if (lockOnTarget != null)
-                {
-                    RotateToTarget();
-                }
-                else
-                {
-                    if (direction != Vector3.zero && controls.Movement != Vector2.zero)
-                    {
-                        var lookRotation = Quaternion.LookRotation(direction);
-                        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotSpeed * Time.deltaTime);
-                    }
-                }
-            }
 
             if (lockOnTarget != null)
             {
@@ -186,7 +172,6 @@ namespace Edescal
                         absDirection = new Vector2(0, Mathf.Sign(animVector.z));
                     else absDirection = new Vector2(Mathf.Sign(animVector.x), 0);
                 }
-                print($"x: {absDirection.x} | y: {absDirection.y}");
                 animator.SetFloat("forward", absDirection.y * currentSpeed * inputMultiplier, 0.1f, Time.deltaTime);
                 animator.SetFloat("horizontal", absDirection.x * currentSpeed * inputMultiplier, 0.1f, Time.deltaTime);
             }
@@ -195,6 +180,33 @@ namespace Edescal
                 animator.SetFloat("forward", (currentSpeed * inputMultiplier), 0.1f, Time.deltaTime);
                 animator.SetFloat("horizontal", 0, 0.1f, Time.deltaTime);
             }
+        }
+
+        void Jump()
+        {
+            if (jumping || !isGrounded || verticalSpeed > 0) return;
+            jumping = true;
+
+            IEnumerator OnJump()
+            {
+                animator.CrossFadeInFixedTime("Jumping", 0.2f);
+
+                float initialValue = inputMultiplier;
+                float time = jumpStart;
+                while(time > 0)
+                {
+                    float t = time / jumpStart;
+                    inputMultiplier = Mathf.Lerp(initialValue / 2, initialValue, t);
+                    yield return null;
+                    time -= Time.deltaTime;
+                }
+
+                verticalSpeed = jumpForce;
+                Falling = true;
+                jumping = false;
+            }
+
+            StartCoroutine(OnJump());
         }
 
         Vector3 InputToForward(Vector2 input)
@@ -212,18 +224,18 @@ namespace Edescal
             if (direction != Vector3.zero)
             {
                 var rotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, (Falling ? rotSpeed / 2 : rotSpeed) * Time.deltaTime);
             }
 
         }
 
         void HandleGravity()
         {
-            isGrounded = controller.isGrounded;
+            isGrounded = verticalSpeed >= 0 ? false : controller.isGrounded;
             if (isGrounded)
             {
-                verticalSpeed = -1;
                 Falling = false;
+                verticalSpeed = -1;
                 fallingCounter = 0;
             }
             else

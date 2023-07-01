@@ -44,8 +44,8 @@ public class AnimatorManager : MonoBehaviour
         }
         else
         {
-            player.ThirdPersonController.SetPosition = animator.rootPosition;
-            player.ThirdPersonController.SetRotation = animator.rootRotation;
+            player.ThirdPersonController.Position = animator.rootPosition;
+            player.ThirdPersonController.Rotation = animator.rootRotation;
         }
     }
 

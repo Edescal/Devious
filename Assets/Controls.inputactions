@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "3c125ae8-0398-42b9-99a5-937ef7150ab8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -150,6 +159,17 @@
                     "action": "UseItem",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "808787cb-1a81-444b-8833-739a4a4edf34",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -177,17 +197,35 @@
                 },
                 {
                     "name": "Pointer",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "e9e32ce3-9308-4c5f-a93e-9c775d91c1b4",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Inventory",
+                    "type": "Button",
+                    "id": "69756f33-527d-4f51-966e-cda2631643ef",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Inventory",
+                    "name": "Click",
+                    "type": "PassThrough",
+                    "id": "f5912afb-2f45-4960-b811-0a1580c21ac3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Cancel",
                     "type": "Button",
-                    "id": "69756f33-527d-4f51-966e-cda2631643ef",
+                    "id": "b4458d4a-bf62-4ab3-90de-3d34467302ba",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -341,7 +379,7 @@
                 {
                     "name": "",
                     "id": "75dad801-925f-42e0-b2a5-91d5f6a4f128",
-                    "path": "<Pointer>/press",
+                    "path": "<Pointer>/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -357,6 +395,28 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "Inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b7fcd57d-d91c-4aff-b567-05a7e35e891a",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b55b2869-3943-45cd-9bbf-ad8f2c02db2f",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

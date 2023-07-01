@@ -1,19 +1,27 @@
 ﻿using UnityEngine;
+using TMPro;
 
 namespace Edescal
 {
-    [RequireComponent(typeof(UnityEngine.UI.Image))]
     public class AnimatedImage : MonoBehaviour
     {
         public float tweenTime = 0.2f;
         public float glowTime = 0.6f;
         public CanvasGroup canvasGroup;
         public CanvasGroup glowCanvas;
+        public TMP_Text label;
 
         private void Start()
         {
             canvasGroup = GetComponent<CanvasGroup>();
             canvasGroup.alpha = 0;
+            label = GetComponentInChildren<TMP_Text>();
+        }
+
+        public void SetLabel(string msg)
+        {
+            if (label == null) return;
+            label.text = msg;
         }
 
         public void Init()

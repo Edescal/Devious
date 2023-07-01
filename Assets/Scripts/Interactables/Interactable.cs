@@ -5,19 +5,22 @@ namespace Edescal.Interactables
 {
     public class Interactable : MonoBehaviour, IDamageable
     {
-        [SerializeField]
-        private bool debugThis = true;
-        [SerializeField]
-        private Outline outline;
+        [field: SerializeField]
+        public string Name { get; private set; }
         [field: SerializeField]
         public int Priority { get; private set; }
-        [SerializeField]
+
+        [Space(10), SerializeField]
         private UnityEvent onInteracted;
+        private Outline outline;
 
         private void Awake()
         {
             if (outline == null)
                 outline = GetComponent<Outline>();
+
+            if (outline!=null)
+                outline.enabled = false;
         }
 
         public void Focus()
@@ -35,11 +38,6 @@ namespace Edescal.Interactables
         public virtual void Interact(Interactor interactor)
         {
             if (!enabled) return;
-
-            if (debugThis)
-            {
-                print($"Interacted with {gameObject.name}");
-            }
 
             onInteracted?.Invoke();
         }

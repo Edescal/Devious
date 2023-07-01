@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 namespace Edescal.Interactables
@@ -75,7 +76,7 @@ namespace Edescal.Interactables
             if (CanInteract && controls.PlayerMapEnabled)
             {
                 var origin = transform.position + (transform.forward * distanceCheck) + (transform.up * verticalOffset);
-                var hits = Physics.OverlapBox(origin, halfBox, transform.localRotation, targetLayers);
+                var hits = Physics.OverlapBox(origin, halfBox, transform.localRotation, targetLayers, QueryTriggerInteraction.Ignore);
                 if (hits.Length > 0)
                 {
                     foreach (var hit in hits)
@@ -93,8 +94,19 @@ namespace Edescal.Interactables
                         {
                             interactorLabel?.Init();
                         }
-                        currentInteractable = SetCurrentInteractable();
-                        currentInteractable.Focus();
+                        var temp = SetCurrentInteractable();
+                        interactorLabel.SetLabel(temp.Name);
+                        currentInteractable = temp;
+                        IEnumerator OnFocus()
+                        {
+                            temp.Focus();
+                            while(temp == currentInteractable)
+                            {
+                                yield return null;
+                            }
+                            temp.Unfocus();
+                        }
+                        StartCoroutine(OnFocus());
                         return;
                     }
                 }
@@ -103,7 +115,6 @@ namespace Edescal.Interactables
             if (currentInteractable != null)
             {
                 interactorLabel?.Stop();
-                currentInteractable.Unfocus();
             }
             currentInteractable = null;
         }
@@ -115,7 +126,7 @@ namespace Edescal.Interactables
                 if (interactable.enabled)
                 {
                     var playerHead = transform.position + (transform.up * 1.3f);
-                    if(!Physics.Linecast(playerHead, interactable.transform.position, obstacleLayers))
+                    if(!Physics.Linecast(playerHead, interactable.transform.position, obstacleLayers, QueryTriggerInteraction.Ignore))
                     {
                         validated = interactable;
                         return true;

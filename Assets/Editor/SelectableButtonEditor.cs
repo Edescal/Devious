@@ -9,26 +9,19 @@ namespace Edescal.DialogueSystem
         private bool defaultFoldout = true;
         private bool selectableFoldout = true;
 
-        private SerializedProperty imageCanvasProperty;
-        private SerializedProperty glowCanvasProperty;
-        private SerializedProperty fadeTimeProperty;
-        private SerializedProperty glowTimeProperty;
-        private SerializedProperty tweenTypeProperty;
-        private SerializedProperty selectedSound, pressedSound;
         private SerializedProperty buttonLabelProperty;
+        private SerializedProperty animatedImageProperty;
+        private SerializedProperty selectedSound, pressedSound, hoverSound;
 
         protected override void OnEnable()
         {
             base.OnEnable();
 
             buttonLabelProperty = serializedObject.FindProperty("buttonLabel");
-            imageCanvasProperty = serializedObject.FindProperty("imageCanvas");
-            glowCanvasProperty = serializedObject.FindProperty("glowCanvas");
-            fadeTimeProperty = serializedObject.FindProperty("fadeTime");
-            glowTimeProperty = serializedObject.FindProperty("glowTime");
-            tweenTypeProperty = serializedObject.FindProperty("tweenType");
+            animatedImageProperty = serializedObject.FindProperty("animatedImage");
             selectedSound = serializedObject.FindProperty("selectedSound");
             pressedSound = serializedObject.FindProperty("pressedSound");
+            hoverSound = serializedObject.FindProperty("hoverSound");
         }
 
         public override void OnInspectorGUI()
@@ -38,13 +31,10 @@ namespace Edescal.DialogueSystem
             {
                 serializedObject.Update();
                 EditorGUILayout.PropertyField(buttonLabelProperty);
-                EditorGUILayout.PropertyField(imageCanvasProperty);
-                EditorGUILayout.PropertyField(glowCanvasProperty);
-                EditorGUILayout.PropertyField(fadeTimeProperty);
-                EditorGUILayout.PropertyField(glowTimeProperty);
-                EditorGUILayout.PropertyField(tweenTypeProperty);
+                EditorGUILayout.PropertyField(animatedImageProperty);
                 EditorGUILayout.PropertyField(selectedSound);
                 EditorGUILayout.PropertyField(pressedSound);
+                EditorGUILayout.PropertyField(hoverSound);
                 EditorGUILayout.Space();
                 serializedObject.ApplyModifiedProperties();
             }

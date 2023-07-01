@@ -25,6 +25,8 @@ namespace Edescal.DialogueSystem
             public Sprite glowSprite;
         }
 
+        public float FadeTime => fadeTime;
+
         private void Start()
         {
             boxCanvas.alpha = 0;

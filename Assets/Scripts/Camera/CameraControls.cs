@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 namespace Edescal
 {
-    [RequireComponent(typeof(CameraLockOn))]
     public class CameraControls : MonoBehaviour
     {
         public Vector2 CameraRotation { get; private set; }

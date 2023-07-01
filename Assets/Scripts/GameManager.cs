@@ -1,58 +1,80 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using Edescal;
 
 public class GameManager : MonoBehaviour
 {
-    public FadeScreen fadeScreen;
-    public Player player;
+    public static GameManager instance { get; private set; }
+    public static event Action<SceneTransitionArgs> onSceneLoaded;
 
-    public void WarpPlayer(Transform point)
+    [SerializeField]
+    private float timeBetweenScenes = 1f;
+    [field:SerializeField]
+    public MusicHandler musicHandler { get; private set; }
+    [field:SerializeField]
+    public FadeScreen fadeScreen { get; private set; }
+
+    private void Awake()
     {
-        IEnumerator OnWarp()
+        if (instance != null)
         {
-            Time.timeScale = 0;
-            
-            fadeScreen.Show();
-            while (fadeScreen.fading)
-            {
-                yield return null;
-            }
-
-            Time.timeScale = 1;
-
-            player.ThirdPersonController.CanMove = false;
-            player.ThirdPersonController.SetPosition = point.position;
-            player.ThirdPersonController.CanMove = true;
-            player?.ThirdPersonCamera?.ResetPosition();
-            player?.AnimatorManager.Animator.SetBool("falling", false);
-            player?.AnimatorManager.Animator.SetTrigger("default");
-
-            fadeScreen.Hide();
-            while (fadeScreen.fading)
-            {
-                yield return null;
-            }
+            Destroy(gameObject);
+            return;
         }
 
-        StartCoroutine(OnWarp());
+        instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    public void FocusOnTarget(LockOnTarget target)
+    public void LoadScene(SceneTransitionArgs args)
     {
-        player.CameraLockOn.CancelTargeting();
-        player.ThirdPersonCamera.SetTarget(target);
-        player.ThirdPersonController.SetTarget(target);
-        player.Interactor.CanInteract = false;
-        player.CameraControls.Disable();
+        if (fadeScreen == null) return;
+
+        IEnumerator AsyncLoading()
+        {
+            WaitForSecondsRealtime wait;
+            Time.timeScale = 0;
+
+            fadeScreen.Show(out float fade);
+            wait = new WaitForSecondsRealtime(fade);
+            yield return wait;
+
+            var asyncOp = SceneManager.LoadSceneAsync(args.sceneId);
+            asyncOp.allowSceneActivation = false;
+            while (asyncOp.progress < 0.9f)
+            {
+                yield return null;
+            }
+
+            if (musicHandler?.IsPlaying == true)
+            {
+                musicHandler.Stop();
+                var waitMusicToStop = new WaitForSecondsRealtime(musicHandler.FadeDuration);
+                yield return waitMusicToStop;
+            }
+            
+            asyncOp.allowSceneActivation = true;
+            yield return null;
+            //Load new scene
+            //Unload previous scene
+            yield return null;
+
+            Debug.Log("Scene loaded");
+            onSceneLoaded?.Invoke(args);
+
+            wait = new WaitForSecondsRealtime(timeBetweenScenes);
+            yield return wait;
+
+            fadeScreen.Hide(out fade);
+            Debug.Log(fade);
+            wait = new WaitForSecondsRealtime(fade);
+            yield return wait;
+
+            Time.timeScale = 1;
+        }
+        StartCoroutine(AsyncLoading());
     }
 
-    public void Unfocus()
-    {
-        player.ThirdPersonCamera.UnsetTarget();
-        player.ThirdPersonController.UnsetTarget();
-        player.CameraControls.Enable();
-        player.Interactor.CanInteract = true;
-    }
 }
