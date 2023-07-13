@@ -9,6 +9,7 @@ namespace Edescal
     public class SelectableButton : Button
     {
         [Header("Settings")]
+        [SerializeField] private string labelKey;
         [SerializeField] private TMP_Text buttonLabel;
         [SerializeField] private AnimatedImage animatedImage;
 
@@ -22,7 +23,29 @@ namespace Edescal
         {
             audioSource = GetComponent<AudioSource>();
             buttonLabel = GetComponentInChildren<TMP_Text>();
-            animatedImage = GetComponentInChildren<AnimatedImage>();
+            this.UpdateLanguage();
+            base.Start();
+        }
+
+        protected override void OnEnable()
+        {
+            Localization.onLanguageChanged += UpdateLanguage;
+            base.OnEnable();
+        }
+
+        protected override void OnDisable()
+        {
+            Localization.onLanguageChanged -= UpdateLanguage;
+            base.OnDisable();
+        }
+
+        protected void UpdateLanguage()
+        {
+            if (!Application.isPlaying) return;
+            if (buttonLabel != null)
+            {
+                buttonLabel.text = Localization.GetString(labelKey);
+            }
         }
 
         public void SetLabel(string label)
@@ -39,7 +62,7 @@ namespace Edescal
         public override void OnDeselect(BaseEventData eventData)
         {
             animatedImage?.Stop();
-            if (selectedSound != null && this.isActiveAndEnabled)
+            if (selectedSound != null && isActiveAndEnabled && interactable)
             {
                 audioSource.PlayOneShot(selectedSound);
             }
@@ -50,7 +73,7 @@ namespace Edescal
         {
             if (eventData.button == PointerEventData.InputButton.Left)
             {
-                if (interactable && pressedSound != null)
+                if (pressedSound != null && isActiveAndEnabled && interactable)
                 {
                     audioSource.PlayOneShot(pressedSound);
                 }
@@ -67,7 +90,7 @@ namespace Edescal
         {
             if (EventSystem.current.currentSelectedGameObject == gameObject) return;
 
-            if (interactable && hoverSound != null)
+            if (isActiveAndEnabled && interactable && hoverSound != null)
             {
                 audioSource.PlayOneShot(hoverSound);
             }
@@ -77,7 +100,7 @@ namespace Edescal
 
         public override void OnSubmit(BaseEventData eventData)
         {
-            if (pressedSound != null)
+            if (interactable && pressedSound != null)
             {
                 audioSource.PlayOneShot(pressedSound);
             }

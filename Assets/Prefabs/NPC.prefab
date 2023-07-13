@@ -209,9 +209,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b67bbe887a9ae04ebd2f9ba63677b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugThis: 1
-  outline: {fileID: 0}
   <Priority>k__BackingField: 0
+  _name: 
   onInteracted:
     m_PersistentCalls:
       m_Calls:
@@ -254,89 +253,29 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  triggerAtStart: 0
   <currentDialogue>k__BackingField: {fileID: 11400000, guid: 4b2f17fb4edec9240a11d6ef49484b67, type: 2}
+  <Punctuation>k__BackingField: {fileID: 0}
   system: {fileID: 0}
   dialogueEvents:
-  - name: 'Custom events for target: NPC_01_Follow'
+  - name: Custom events - NPC_1
     targetDialogue: {fileID: 11400000, guid: 4b2f17fb4edec9240a11d6ef49484b67, type: 2}
-    customEvent:
+    onDialogueEnded:
       m_PersistentCalls:
         m_Calls: []
     responseMessage: "\xBFQuieres que te siga?"
     responseEvents:
-    - name: OK response for D_02
-      responseEvent:
-        m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 6424136273898781716}
-            m_TargetAssemblyTypeName: Edescal.AI.Enemy, Assembly-CSharp
-            m_MethodName: set_chasePlayer
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-          - m_Target: {fileID: 6424136273898781726}
-            m_TargetAssemblyTypeName: Edescal.DialogueSystem.DialogueEvent, Assembly-CSharp
-            m_MethodName: set_currentDialogue
-            m_Mode: 2
-            m_Arguments:
-              m_ObjectArgument: {fileID: 11400000, guid: fe533df4167efec46be0f07e6cb757c5, type: 2}
-              m_ObjectArgumentAssemblyTypeName: Edescal.DialogueSystem.Dialogue,
-                Assembly-CSharp
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-    - name: CANCEL response for D_02
+    - name: OK response for NPC_1
       responseEvent:
         m_PersistentCalls:
           m_Calls: []
-  - name: 'Custom events for target: NPC_01_Unfollow'
+  - name: Custom events - NPC_2
     targetDialogue: {fileID: 11400000, guid: fe533df4167efec46be0f07e6cb757c5, type: 2}
-    customEvent:
+    onDialogueEnded:
       m_PersistentCalls:
         m_Calls: []
-    responseMessage: "\xBFQuieres que deje de seguirte?"
-    responseEvents:
-    - name: OK response for D_02
-      responseEvent:
-        m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 6424136273898781716}
-            m_TargetAssemblyTypeName: Edescal.AI.Enemy, Assembly-CSharp
-            m_MethodName: set_chasePlayer
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-          - m_Target: {fileID: 6424136273898781726}
-            m_TargetAssemblyTypeName: Edescal.DialogueSystem.DialogueEvent, Assembly-CSharp
-            m_MethodName: set_currentDialogue
-            m_Mode: 2
-            m_Arguments:
-              m_ObjectArgument: {fileID: 11400000, guid: 4b2f17fb4edec9240a11d6ef49484b67, type: 2}
-              m_ObjectArgumentAssemblyTypeName: Edescal.DialogueSystem.Dialogue,
-                Assembly-CSharp
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-    - name: CANCEL response for D_02
-      responseEvent:
-        m_PersistentCalls:
-          m_Calls: []
+    responseMessage: Dialogue NPC_2 doesn't accept responses!
+    responseEvents: []
 --- !u!114 &168264631905340792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,7 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RigLayers:
-  - m_Rig: {fileID: 0}
+  - m_Rig: {fileID: 2065341295119645746}
     m_Active: 1
   m_Effectors: []
 --- !u!114 &6207366654746529747
@@ -575,7 +514,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2035982880554974284}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.71, y: 0, z: 5.15}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

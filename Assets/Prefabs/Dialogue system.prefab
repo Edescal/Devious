@@ -178,7 +178,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 8
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 14
@@ -825,9 +825,21 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2802492455278942404, guid: cf382ef4f17b4b740a3d2b0476184174, type: 3}
+      propertyPath: m_Spacing
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2802492455278942411, guid: cf382ef4f17b4b740a3d2b0476184174, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 460
+      objectReference: {fileID: 0}
     - target: {fileID: 2802492455533103257, guid: cf382ef4f17b4b740a3d2b0476184174, type: 3}
       propertyPath: m_RaycastTarget
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2802492455971945010, guid: cf382ef4f17b4b740a3d2b0476184174, type: 3}
+      propertyPath: m_Alpha
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2802492455971945010, guid: cf382ef4f17b4b740a3d2b0476184174, type: 3}
       propertyPath: m_Interactable

@@ -1,0 +1,96 @@
+Id;ESP;EN
+intro_0;Por fin... creo que he despertado. Fue un sueño muy largo, sentí que viví una vida entera.;Finally... I think I have woken up. It was a very long dream, I felt like I lived a whole lifetime.
+intro_1;En realidad... creo que no he despertado. Sigo soñando. Un sueño lúcido, seguramente, ¿o no?;Actually... I think I haven't woken up. I'm still dreaming. A lucid dream this may be, or it isn't?
+intro_2;Tal vez puedo seguir soñando un poco más.;Maybe I can dream a little longer.
+
+int_statue;Estatua;Statue
+int_exit;Salir;Exit
+empty;;
+
+tomb;Monumento de piedra;Stone monument
+tomb1;<color=yellow>"Los sueños y el Cosmos son uno."</color>;<color=yellow>"The dreams and the Cosmos are one."</color>
+tomb2;<color=yellow>"Incompleto"</color>;<color=yellow>"Incomplete"</color>
+statue1;Esta extraña estatua... ¿soy yo?;This strange statue... it is I?
+
+menu_play;Nuevo juego;New game
+menu_exit;Cerrar;Exit
+menu_credits;Créditos;Credits
+menu_lang;Lenguaje: Español;Language: English
+menu_continue;Continuar;Continue
+menu_options;Opciones;Options
+
+Scn_ama;Amaltea;Amaltea
+Scn_gani;Jardín Ganímedes;Ganimedes Garden
+Scn_cal;Prisión Calisto;Calisto Prison
+Scn_tem;Celda Temisto;Temisto Cell
+
+pause_resume;Continuar;Resume
+pause_exit;Regresar al menú;Exit to menu
+yes;Sí;Yes
+no;No;No
+resp_msg_statue_0;¿Ir al <color=yellow>Jardín Ganímedes</color>?;Go to <color=yellow>Ganymede Garden</color>?
+calisto;<color=yellow>"Prisión Calisto"</color>;<color=yellow>"Callisto Prison"</color>
+
+monster;???;???
+monster_1;Deseo más... incompleto...;Craving more... incomplete...
+monster_2;Ahh... gracias.;Ahh... thank you.
+
+
+to_amal;¿Ir a <color=yellow>Amaltea</color>?;Go to <color=yellow>Amalthea</color>?
+to_gani;¿Ir al <color=yellow>Jardín Ganímedes</color>?;Go to <color=yellow>Ganymede Garden</color>?
+to_cali;¿Ir a la <color=yellow>Prisión Calisto</color>?;Go to <color=yellow>Callisto Prison</color>?
+placeholder;placeholder;placeholder
+
+eye_event_int;Notas viejas;Old notes
+eye_event_1a;<color=yellow>"En los sueños los límites son difusos, pero una vez que son superados no hay vuelta atrás."</color>;<color=yellow>"In dreams, the limit between here and the beyond are blurry, but once you surpass them there's not turning back."</color>
+eye_event_1b;<color=yellow>"Cuando se es más allá de la frontera del sueño, parásitos encuentran en la mente de uno hospedaje."</color>;<color=yellow>"When one is beyond the borders, parasites from nowhere find lodging in the brain."</color>
+eye_event_2;<color=yellow>"... en el momento en el que <color=red>ellos</color> aparecen ante ti, ya se ha decidido tu destino."</color>;<color=yellow>"...by the time <color=red>they</color> appear before you, your fate has already been stealed."</color>
+eye_event_3a;<color=yellow>"Capítulo 4: <color=red>En relación a los Sueños y Otros Mundos</color>"</color>;<color=yellow>"Chapter 4: <color=red>Regarding Dreams and Other Worlds</color>"</color>
+eye_event_3b;...;...
+eye_event_3c;<color=yellow>"... la exposición a lo prohibido crea umbrales que el ser humano es incapaz de percibir por diseño natural."</color>;<color=yellow>"... exposure to the forbidden creates portals that human beings can not naturally perceive by natural design."</color>
+
+eye_event_3d;<color=yellow>"Emisarios de otros mundos, en su incansable búsqueda de carcasas, aprovechan la rara oportunidad de crear un vínculo psíquico con nuestro plano de existencia."</color>;<color=yellow>"Otherworldly emissaries, in their relentless pursuit of vessels, seize the rare chance to forge a psychic bond with our plane of existence"</color>
+
+eye_revealed_1;<color=yellow>"... el mayor peligro del ritual es que los vínculos creados se cierren antes de terminar nuestras diligencias..."</color>;The greatest danger of the ritual is that the bonds created may close before we finish our duty.
+eye_revealed_2;<color=yellow>"... no hay vuelta atrás, no hay tiempo al que avanzar ni retroceder..."</color>;There's no turning back, there's no time to move forward or backward.
+
+eye_ascended_int;Cuerpo maldito;Cursed body
+
+eye_ascended1;No tengas miedo...;Be not afraid...
+eye_ascended2;Solo necesitamos un poco más de tu esfuerzo.;We just need a little more of your efforts.
+eye_ascended3;Has visto cosas, que nublan tu mente.;You have seen things that cloud your mind.
+eye_ascended4;No más dolor. no más sufrimiento. No más apegos... Solo necesito más esfuerzo.;No more pain. No more suffering. No more attachments... I just need more efforts.
+eye_ascended5;Una vez más cerraste todos los caminos posibles.;Once again, you closed all possible paths.
+eye_ascended6;¿Por qué no empezamos una vez más?;Why don't we start again?
+eye_ascended_resMsg;¿Qué decides?;What do you choose?
+eye_ascended_yes1;Así debe ser... solo cierra los ojos.;That's how it should be... just close your eyes.
+eye_ascended_yes2;Oh... ya casi va a germinar. No tengas miedo de lo que pasará.;Oh... it's about to evolve. Don't be afraid of what will happen.
+eye_ascended_no1;Oh claro, la negación se vuelve a presentar. Qué futilidad.;Oh, of course, denial presents itself again. How futile.
+eye_ascended_no2;Ya tengo suficiente poder para pronunciar palabra, ya puedo pensar en el mismo plano que habitas. Sin embargo...;I already have enough power to speak word, to think on the same plane you inhabit. Yet...
+eye_ascended_after;...;...
+
+note;Nota extraña;Strange note
+note_a;Alguien dejó algunas notas, no parecen tener nada escrito.;Someone left some notes, they don't seem to have anything written on them.
+note_b;Hay una nota con un mensaje:;There's a note with a message:
+note_c;¿Recoger nota?;Keep the note?
+
+note1;<color=yellow>"Ven a verme en la última celda de la prisión, necesito contarte algo."</color>;<color=yellow>"Come to see me in the last cell of the prison, I need to tell you something."</color>
+note2;<color=yellow>"Estamos atrapados, no hay salida. Necesito ver mi reflejo para recordar mi rostro."</color>; <color=yellow>"We're trapped, there's no way out. I need to see my reflection to remember my face."</color>
+note3;<color=yellow>"Ya no veo aquellos fantasmas revoloteando alrededor de mi cabeza. Pero no sé si deba tranquilizarme."</color>;<color=yellow>"I no longer see those phantasms fluttering around my head. But I don't know if I should calm down."</color>
+note4;<color=yellow>"Necesito decirte mi nombre, antes de que se me olvide, pronto podría llegarl al punto de no poder recordar cuando fuimos uno."</color>;<color=yellow>"I need to tell you my name before I forget it, I might soon reach a point where I won't even be capable of remember who we are."</color>
+
+note5;<color=yellow>"Las estatuas nos recuerdan cómo somos, también nos ayudan a transportarnos a otros lugares."</color>;<color=yellow>"Statues remind us who we were, they also help us to travel to other places."</color>;
+
+npc;Persona extraña;Unknown person
+npc1;Oh... nadie ha venido a este lugar en mucho tiempo. Es un gusto ver a alguien aquí, ¿Cómo estás?;Oh... nobody has come here in a long time. It's nice to see someone here. How are you?
+npc_resMsg;¿Entregar nota?;Give note?
+npc2;Ahh... recuerdo escribir esta nota. Parece que tenía algo importante que decirle a alguien.;Ahh... I remember write this note. It seems like I had something very important to tell to someone.
+npc3;Lo siento, en realidad no recuerdo que quería decir, perdón por hacerte venir hasta aquí.;I'm sorry, I actually don't remember what I wanted to say. I apologize for making you come to this place.
+npc4;¿A dónde piensas ir ahora?;Have you ever prayed?
+npc5;(La persona que acabas de conocer yace muerta enfrente de ti en este jardín, en su mano encuentras varias notas.);(The person you just met lies dead in front of you at the garden, in their hand, you founded some notes)
+
+exit_int;Salir a lo desconocido;Go to the unknown
+
+ending1;Y así... vuelvo al sueño... Los veo revolotear dentro de mi cráneo. Devoran mis recuerdos, mis pensamientos, mi ser...;And so... I return to the dream... I see them fluttering inside my skull. They devour my memories, my thoughts, my being...
+ending2;Debo... despertar un vez más... ¿cuántas veces faltan?;I must... wake up once more... How many times left?
+ending3;<color=yellow>¿ES ESTE EL FIN?</color>;<color=yellow>IS THIS THE END?</color>

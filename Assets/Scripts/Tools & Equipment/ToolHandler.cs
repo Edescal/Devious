@@ -10,11 +10,6 @@ public class ToolHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        if (input == null)
-        {
-            input = FindObjectOfType<InputReader>();
-        }
-
         if (input != null)
         {
             input.onUseItem += UseTool;

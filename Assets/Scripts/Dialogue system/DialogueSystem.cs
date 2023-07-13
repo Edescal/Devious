@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine;
@@ -6,7 +7,6 @@ namespace Edescal.DialogueSystem
 {
     public class DialogueSystem : MonoBehaviour
     {
-        public Language language;
         public bool isRunning { get; private set; }
         public bool abort { get; set; }
 
@@ -26,38 +26,33 @@ namespace Edescal.DialogueSystem
 
         [Header("Sound FX")]
         [SerializeField] private AudioSource audioSource;
-        [SerializeField] private AudioClip dialogueInput;
-        [SerializeField] private AudioClip nextDialogue;
-        [SerializeField] private AudioClip stopDialogue;
-        private Coroutine coroutine, secondaryCo;
+        [SerializeField] private AudioClip dialogueInput, nextDialogue, stopDialogue;
+        private WaitForSeconds waitStart, waitBetween, waitBeforeResponses, waitToEnd;
+        private Coroutine coroutine;
 
         private void Awake()
         {
             StopDialogue();
-            secondaryCo = null;
+            waitStart = new WaitForSeconds(timeToStart);
+            waitBetween = new WaitForSeconds(timeBetweenDialogues);
+            waitBeforeResponses = new WaitForSeconds(timeBeforeResponses);
+            waitToEnd = new WaitForSeconds(timeToEnd);
+            Debug.Log("# Dialogue system initiated!");
         }
 
-        public void InitDialogue(DialogueEvent @event)
+        public void StartDialogue(DialogueEvent @event)
         {
-            if (isRunning) return;
             isRunning = true;
             abort = false;
 
             typingMachine.Reset(this);
-            
+
             if (coroutine != null)
             {
                 StopCoroutine(coroutine);
                 coroutine = null;
             }
             coroutine = StartCoroutine(DialogueSequence(@event));
-
-            if (secondaryCo != null)
-            {
-                StopCoroutine(secondaryCo);
-                secondaryCo = null;
-            }
-            secondaryCo = StartCoroutine(CheckForAbort(@event));
         }
 
         public void StopDialogue()
@@ -76,30 +71,28 @@ namespace Edescal.DialogueSystem
 
         private IEnumerator DialogueSequence(DialogueEvent dialogueEvent)
         {
-            var waitStart = new WaitForSeconds(timeToStart);
-            var waitBetween = new WaitForSeconds(timeBetweenDialogues);
-            var waitBeforeResponses = new WaitForSeconds(timeBeforeResponses);
-            var waitToEnd = new WaitForSeconds(timeToEnd);
-
             Dialogue dialogue = dialogueEvent.currentDialogue;
-            string[] dialogueTexts = dialogue.dialogues;
-
+            string[] dialogueTexts = dialogue.GetDialogues();
             yield return waitStart;
-            dialogueBox.ShowCanvas();
 
-            for (int i = 0; i < dialogueTexts.Length; i++)
+            //Si no hay diálogos se salta directo a las respuestas...
+            if (dialogueTexts.Length > 0)
             {
-                bool isLastLine = i == dialogueTexts.Length - 1;
-                yield return waitBetween;
+                dialogueBox.ShowCanvas();
+                for (int i = 0; i < dialogueTexts.Length; i++)
+                {
+                    bool isLastLine = i == dialogueTexts.Length - 1;
+                    yield return waitBetween;
 
-                var routine = CheckCurrentLine(dialogueTexts[i], dialogueEvent.Punctuation, isLastLine);
-                yield return routine;
+                    var routine = CheckCurrentLine(dialogueTexts[i], dialogueEvent.Punctuation, isLastLine);
+                    yield return routine;
 
-                var waitInput = CheckForInput(isLastLine);
-                yield return waitInput;
+                    var waitInput = CheckForInput(isLastLine);
+                    yield return waitInput;
+                }
+                dialogueBox.HideCanvas();
+                dialogueEvent.CustomEvent();
             }
-            
-            dialogueBox.HideCanvas();
 
             //Si el dialogo tiene respuestas...
             if (dialogue.responseType != ResponseType.NO_OPTIONS)
@@ -111,21 +104,27 @@ namespace Edescal.DialogueSystem
                     yield return null;
                 }
                 responseBox.Hide();
+                dialogueEvent.ResponseSelected(responseBox.selectedResponseIndex);
             }
 
             yield return waitToEnd;
+            
+            dialogueEvent.DialogueEnd();
             StopDialogue();
         }
 
         private IEnumerator CheckCurrentLine(string text, Punctuation data, bool isLast)
         {
             typingMachine.Start(text, data, this);
+            Action<InputAction.CallbackContext> forceEnd = ctx => typingMachine.forceEnd = true;
 
+            input.UI.Cancel.canceled += forceEnd;
             while (typingMachine.isRunning)
             {
                 typingMachine.isPressingFaster = input.UI.Submit.IsPressed();
                 yield return null;
             }
+            input.UI.Cancel.canceled -= forceEnd;
 
             AudioClip clip = isLast ? stopDialogue : nextDialogue;
             if (clip != null)
@@ -145,7 +144,7 @@ namespace Edescal.DialogueSystem
             while (!pressedInput)
             {
                 yield return null;
-                if (input.UI.Submit.WasPerformedThisFrame())
+                if (input.UI.Submit.WasPerformedThisFrame() || input.UI.Cancel.WasPerformedThisFrame())
                 {
                     pressedInput = true;
                     if (audioSource != null && dialogueInput != null)
@@ -157,7 +156,7 @@ namespace Edescal.DialogueSystem
             wait = new WaitForSeconds(dialogueBox.FadeTime);
             yield return wait;
         }
-    
+        /*
         private IEnumerator CheckForAbort(DialogueEvent @event)
         {
             while (isRunning)
@@ -166,21 +165,16 @@ namespace Edescal.DialogueSystem
                 if (abort)
                 {
                     typingMachine.isRunning = false;
-                    @event.ResponseStatus(responseBox.selectedResponseIndex);
                     @event.DialogueStatus(false);
-                    this.StopDialogue();
                     dialogueBox.HideCanvas();
                     dialogueBox.HideIcon();
+                    StopDialogue();
                     yield break;
                 }
             }
 
-            if (@event.currentDialogue.responseType != ResponseType.NO_OPTIONS)
-            {
-                @event.ResponseStatus(responseBox.selectedResponseIndex);
-            }
-
             @event.DialogueStatus(true);
         }
+        */
     }
 }

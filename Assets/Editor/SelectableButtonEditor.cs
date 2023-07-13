@@ -9,6 +9,7 @@ namespace Edescal.DialogueSystem
         private bool defaultFoldout = true;
         private bool selectableFoldout = true;
 
+        private SerializedProperty labelKeyProperty;
         private SerializedProperty buttonLabelProperty;
         private SerializedProperty animatedImageProperty;
         private SerializedProperty selectedSound, pressedSound, hoverSound;
@@ -17,6 +18,7 @@ namespace Edescal.DialogueSystem
         {
             base.OnEnable();
 
+            labelKeyProperty = serializedObject.FindProperty("labelKey");
             buttonLabelProperty = serializedObject.FindProperty("buttonLabel");
             animatedImageProperty = serializedObject.FindProperty("animatedImage");
             selectedSound = serializedObject.FindProperty("selectedSound");
@@ -30,6 +32,7 @@ namespace Edescal.DialogueSystem
             if (selectableFoldout)
             {
                 serializedObject.Update();
+                EditorGUILayout.PropertyField(labelKeyProperty);
                 EditorGUILayout.PropertyField(buttonLabelProperty);
                 EditorGUILayout.PropertyField(animatedImageProperty);
                 EditorGUILayout.PropertyField(selectedSound);

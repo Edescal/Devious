@@ -18,7 +18,6 @@ namespace Edescal
                 controller.enabled = false;
                 transform.position = value;
                 controller.enabled = true;
-                Debug.Log($"Set new position... {value}");
             }
         }
 
@@ -98,18 +97,26 @@ namespace Edescal
         public void SetTarget(LockOnTarget target) => lockOnTarget = target;
         public void UnsetTarget() => lockOnTarget = null;
 
-        void Awake()
+        private void Awake()
         {
             player = GetComponent<IEntity>();
             mainCamera = Camera.main.transform;
             controls = GetComponent<InputReader>();
             controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
+        }
 
+        private void OnEnable()
+        {
             controls.onJump += Jump;
         }
 
-        void Update()
+        private void OnDisable()
+        {
+            controls.onJump -= Jump;
+        }
+
+        private void Update()
         {
             if (Time.timeScale == 0) return;
 
@@ -118,6 +125,7 @@ namespace Edescal
             var direction = InputToForward(controls.Movement);
             if (CanMove)
             {
+                #region Rotation
                 if (lockOnTarget != null && !jumping)
                 {
                     RotateToTarget();
@@ -127,10 +135,11 @@ namespace Edescal
                     var lookRotation = Quaternion.LookRotation(direction);
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotSpeed * Time.deltaTime);
                 }
+                #endregion
             }
 
             direction = SlopeCheck(direction);
-            bool sprint = controls.Sprint || controls.Autosprint;
+            bool sprint = lockOnTarget != null ? false : controls.Sprint || controls.Autosprint; //Can't sprint while targeting
             float speed = sprint ? sprintinSpeed : walkingSpeed;
 
             float currentVelocity = 0;
@@ -161,6 +170,7 @@ namespace Edescal
 
             if (lockOnTarget != null)
             {
+                #region Animator when targeting
                 var animVector = transform.InverseTransformDirection(direction);
                 var absDirection = Vector2.zero;
                 if (controls.Movement != Vector2.zero)
@@ -174,6 +184,7 @@ namespace Edescal
                 }
                 animator.SetFloat("forward", absDirection.y * currentSpeed * inputMultiplier, 0.1f, Time.deltaTime);
                 animator.SetFloat("horizontal", absDirection.x * currentSpeed * inputMultiplier, 0.1f, Time.deltaTime);
+                #endregion
             }
             else
             {
@@ -182,9 +193,9 @@ namespace Edescal
             }
         }
 
-        void Jump()
+        private void Jump()
         {
-            if (jumping || !isGrounded || verticalSpeed > 0) return;
+            if (!CanMove || jumping || !isGrounded || verticalSpeed > 0) return;
             jumping = true;
 
             IEnumerator OnJump()

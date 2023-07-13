@@ -8,6 +8,7 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ICam
     public event Action onInteracted;
     public event Action onJump;
     public event Action onUseItem;
+    public event Action onPause;
     public bool Sprint { get; private set; }
     public bool Autosprint { get; private set; }
     public bool PlayerMapEnabled => controls.Player.enabled;
@@ -127,5 +128,13 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions, Controls.ICam
     public void OnZoom(InputAction.CallbackContext context)
     {
         Zoom = context.ReadValue<float>();
+    }
+
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        if (context.canceled)
+        {
+            onPause?.Invoke();
+        }
     }
 }

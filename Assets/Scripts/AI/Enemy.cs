@@ -153,6 +153,4 @@ namespace Edescal.AI
             StartCoroutine(Rotate());
         }
     }
-
-    
 }

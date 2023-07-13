@@ -1,7 +1,6 @@
 using System.Collections;
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
@@ -45,8 +44,20 @@ namespace Edescal.DialogueSystem
                     responseBtns[index].interactable = false;
                     responseBtns[index].onClick.AddListener(() =>
                     {
+                        foreach (var btn in responseBtns)
+                            btn.interactable = false;
+
                         selectedResponseIndex = index;
-                        isWaiting = false;
+                        IEnumerator Delay()
+                        {
+                            var waitAfterResp = new WaitForSeconds(fadeTime);
+                            yield return waitAfterResp;
+                            isWaiting = false;
+                            if (coroutine != null)
+                                StopCoroutine(coroutine);
+                            EventSystem.current.SetSelectedGameObject(null);
+                        }
+                        StartCoroutine(Delay());
                     });
                 }
             }
@@ -68,7 +79,7 @@ namespace Edescal.DialogueSystem
             if (respEvts != null)
             {
                 for (int i = 0; i < respEvts.Length; i++)
-                    strings[i] = respEvts[i].name;
+                    strings[i] = respEvts[i].Name;
             }
 
             Action<int> Set = (n) =>
@@ -115,9 +126,6 @@ namespace Edescal.DialogueSystem
 
         public void Hide()
         {
-            foreach(var btn in responseBtns)
-                btn.interactable = false;
-            
             LeanTween.cancel(responseCanvas.gameObject);
             LeanTween.alphaCanvas(responseCanvas, 0, fadeTime)
                 .setEase(LeanTweenType.easeInSine);
@@ -126,14 +134,16 @@ namespace Edescal.DialogueSystem
         private IEnumerator WaitForResponse()
         {
             EventSystem.current.SetSelectedGameObject(responseBtns[0].gameObject);
-            GameObject lastSelected = EventSystem.current.currentSelectedGameObject;
+            //GameObject lastSelected = EventSystem.current.currentSelectedGameObject;
             while (isWaiting)
             {
+                /*
                 if (EventSystem.current.currentSelectedGameObject == null)
                 {
                     EventSystem.current.SetSelectedGameObject(lastSelected);
                 }
                 lastSelected = EventSystem.current.currentSelectedGameObject;
+                */
                 yield return null;
             }
             coroutine = null;

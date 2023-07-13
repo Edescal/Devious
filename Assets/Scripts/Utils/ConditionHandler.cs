@@ -22,8 +22,12 @@ public class ConditionHandler : MonoBehaviour
         }
     }
 
+    public void UpdateCondition(string name) => UpdateCondition(name, true);
+
     public void UpdateCondition(string name, bool value)
     {
+        if (!isActiveAndEnabled) return;
+
         if (conditions.ContainsKey(name))
         {
             conditionValues[conditions[name]] = value;
@@ -38,8 +42,7 @@ public class ConditionHandler : MonoBehaviour
                 }
             }
 
-            if (allTrue)
-                onAllConditionsTrue?.Invoke();
+            if (allTrue) onAllConditionsTrue?.Invoke();
         }
     }
 

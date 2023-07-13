@@ -111,15 +111,15 @@ MonoBehaviour:
   mainCamera: {fileID: 7961834186260102332}
   player: {fileID: 0}
   cameraSmoothness: 0.1
-  cameraDistance: 4.05
+  cameraDistance: 2
   rotationSpeed: 242
   acceleration: 0.035
   zoomSensitivity: 7
   cameraAngleLimit: {x: -30, y: 60}
-  zoomRange: {x: 1.5, y: 7}
+  zoomRange: {x: 1.5, y: 4}
   ignoreCollisionMask:
     serializedVersion: 2
-    m_Bits: 76
+    m_Bits: 204
   collisionOffsetValue: 0.5
   cameraCollisionRadius: 0.3
   minDistanceToPlayer: 0.2
@@ -145,7 +145,7 @@ MonoBehaviour:
   viewAngle: -45
   targetLayer:
     serializedVersion: 2
-    m_Bits: 4
+    m_Bits: 196
   obstaclesLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -262,7 +262,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -372,7 +372,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7961834186260102331}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -4.05}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -6,23 +6,20 @@ using Edescal;
 public class FadeScreen : MonoBehaviour
 {
     public bool fading { get; private set; } = false;
-
+    [field:SerializeField]
+    public float fadeTime { get; private set; } = 0.75f;
     [SerializeField]
     private CanvasGroup canvasGroup;
-    [SerializeField]
-    private float fadeTime = 0.75f;
 
     [ContextMenu("Show")]
-    public void Show(out float time)
+    public WaitForSecondsRealtime Show()
     {
         if (fading)
         {
-            time = 0;
-            return;
+            return new WaitForSecondsRealtime(0);
         }
 
         fading = true;
-        time = fadeTime;
         LeanTween.alphaCanvas(canvasGroup, 1, fadeTime)
             .setEase(LeanTweenType.easeInOutSine)
             .setIgnoreTimeScale(true)
@@ -30,26 +27,26 @@ public class FadeScreen : MonoBehaviour
             {
                 fading = false;
             });
+        return new WaitForSecondsRealtime(fadeTime);
     }
 
     [ContextMenu("Hide")]
-    public void Hide(out float time)
+    public WaitForSecondsRealtime Hide()
     {
         if (fading)
         {
-            time = 0;
-            return;
+            return new WaitForSecondsRealtime(0);
         }
 
         fading = true;
-        time = fadeTime;
         LeanTween.alphaCanvas(canvasGroup, 0, fadeTime)
             .setEase(LeanTweenType.easeInOutSine)
             .setIgnoreTimeScale(true)
-            .setOnUpdate((float f) => print("Fading"))
             .setOnComplete(() =>
             {
                 fading = false;
             });
+
+        return new WaitForSecondsRealtime(fadeTime);
     }
 }

@@ -176,12 +176,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2f52a1ec194d0744aa07cfe03756d79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonContainer: {fileID: 2802492455278942411}
+  buttonPrefab: {fileID: 2415950348307180221, guid: 3f233c62472bd9c4ea567b3ab88593e2, type: 3}
   responseCanvas: {fileID: 2802492455971945010}
   responseLabel: {fileID: 2802492456272052355}
   fadeTime: 0.3
-  buttonPrefab: {fileID: 2415950348307180221, guid: 3f233c62472bd9c4ea567b3ab88593e2, type: 3}
-  buttonContainer: {fileID: 2802492455278942411}
-  responseBtns: []
 --- !u!1 &2802492456272052353
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +282,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 8
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 14

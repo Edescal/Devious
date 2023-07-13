@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c90c23158360814ba5ea8574c578587, type: 3}
+  m_Name: NPC_Info
+  m_EditorClassIdentifier: 
+  <dialogues>k__BackingField:
+  - "Por supuesto, ha pasado tanto tiempo desde que nos vimos por \xFAltima vez.
+    Posiblemente tambi\xE9n has olvidado este lugar."
+  - "Ahora mismo estamos en una <color=yellow>isla</color>, estas islas son peque\xF1os
+    espacios en tu mente."
+  - "A trav\xE9s de los <color=red>monumentos de piedra</color> puedes ir de una
+    isla a otra. Int\xE9ntalo para que refresques tu memoria."
+  <responseType>k__BackingField: 0

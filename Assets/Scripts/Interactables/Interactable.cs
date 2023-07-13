@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Edescal.Interactables
@@ -6,12 +7,16 @@ namespace Edescal.Interactables
     public class Interactable : MonoBehaviour, IDamageable
     {
         [field: SerializeField]
-        public string Name { get; private set; }
-        [field: SerializeField]
         public int Priority { get; private set; }
+        public string Name => Localization.GetString(_name);
 
+        [SerializeField]
+        private string _name;
         [Space(10), SerializeField]
+        private float onInteractedDelay = 0;
+        [SerializeField]
         private UnityEvent onInteracted;
+
         private Outline outline;
 
         private void Awake()
@@ -39,7 +44,17 @@ namespace Edescal.Interactables
         {
             if (!enabled) return;
 
-            onInteracted?.Invoke();
+            if (onInteractedDelay > 0)
+            {
+                IEnumerator OnDelay()
+                {
+                    var wait = new WaitForSeconds(onInteractedDelay);
+                    yield return wait;
+                    onInteracted?.Invoke();
+                }
+                StartCoroutine(OnDelay());
+            }
+            else onInteracted?.Invoke();
         }
     
         public virtual void ApplyDamage(int damage, object source)

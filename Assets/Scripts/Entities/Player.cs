@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using UnityEngine;
 using Edescal.Interactables;
 
@@ -12,8 +12,9 @@ namespace Edescal
         [field: SerializeField] public ThirdPersonController ThirdPersonController { get; private set; }
         [field: SerializeField] public ThirdPersonCamera ThirdPersonCamera { get; private set; }
         [field: SerializeField] public CameraLockOn CameraLockOn { get; private set; }
-        [field: SerializeField] public CameraControls CameraControls { get; private set; }
         [field: SerializeField] public Interactor Interactor { get; private set; }
+
+        public string animStateDebug="";
 
         public void ApplyDamage(int damage, object source)
         {
@@ -21,6 +22,23 @@ namespace Edescal
             if (Health == null) return;
 
             Health.CurrentHealth -= damage;
+        }
+
+        public void DebugAnimCallback()
+        {
+            Action start = () =>
+            {
+                Debug.Log("Invoke start anim");
+                ThirdPersonController.CanMove = false;
+                Interactor.CanInteract = false;
+            };
+            Action end = () =>
+            {
+                Debug.Log("Invoke end anim");
+                ThirdPersonController.CanMove = true;
+                Interactor.CanInteract = true;
+            };
+            AnimatorManager.Play(animStateDebug, 0.25f, 0, true, start, end);
         }
     }
 }

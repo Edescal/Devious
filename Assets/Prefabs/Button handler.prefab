@@ -271,7 +271,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   buttonLabel: {fileID: 1498207730059633983}
-  animatedImage: {fileID: 0}
+  animatedImage: {fileID: 6034622318363735683}
   selectedSound: {fileID: 8300000, guid: 7c45fe8e3e514b1459f7b0c325fc5d5c, type: 3}
   pressedSound: {fileID: 8300000, guid: e1a949ed1912348469b04ce3ab858319, type: 3}
   hoverSound: {fileID: 8300000, guid: cf917f38e05e93649a8cab4dfc72d34d, type: 3}
@@ -612,6 +612,7 @@ GameObject:
   - component: {fileID: 6669617463302399201}
   - component: {fileID: 4522845474681733978}
   - component: {fileID: 5170771610433515864}
+  - component: {fileID: 6034622318363735683}
   m_Layer: 5
   m_Name: Selection Icon
   m_TagString: Untagged
@@ -661,3 +662,20 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &6034622318363735683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6569777789348496847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64a15a9cc8d7e14ead1629fb7715522, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tweenTime: 0.2
+  glowTime: 0.6
+  canvasGroup: {fileID: 5170771610433515864}
+  glowCanvas: {fileID: 4304611553487712190}
+  label: {fileID: 1498207730059633983}

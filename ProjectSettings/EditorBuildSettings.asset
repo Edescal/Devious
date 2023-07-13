@@ -6,15 +6,31 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Isla.unity
-    guid: 5ac14a699827d5c499d584a8886fc867
-  - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
-    path: Assets/Scenes/Devious_main_menu.unity
+    path: Assets/Scenes/Main menu.unity
     guid: f595204a5d79a204f89fcebd830b3cae
   - enabled: 1
-    path: Assets/Dialogue.unity
+    path: Assets/Scenes/Intro dialogue.unity
     guid: 9a782b306ad85724091297d674dae290
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/Amaltea.unity
+    guid: 5ac14a699827d5c499d584a8886fc867
+  - enabled: 1
+    path: Assets/Scenes/Ganimedes Garden.unity
+    guid: 057eee03565552d40af841978aff920a
+  - enabled: 1
+    path: Assets/Scenes/Calisto prison vr2.unity
+    guid: d5716336b760d2f4db7ea0e6f066cb15
+  - enabled: 0
+    path: Assets/Scenes/Temisto cell.unity
+    guid: 3ab6cea0585f01245972ea487aef618f
+  - enabled: 1
+    path: Assets/Scenes/Temisto cell v2.unity
+    guid: 719f215a3baa8b94a810605a40794c9c
+  - enabled: 1
+    path: Assets/Scenes/Amaltea alt.unity
+    guid: 48371a0ca9b6590479debb22cb3e8da4
+  - enabled: 1
+    path: Assets/Scenes/Ending dialogue.unity
+    guid: 523d32dacf6d50548be2f229af6e9631
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: b77c2ed01a5b83e4799040108710eb01, type: 2}

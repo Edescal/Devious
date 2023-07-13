@@ -12,32 +12,28 @@ public class SceneSpawn : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log("On enable");
         GameManager.onSceneLoaded += Set;
     }
 
     private void OnDisable()
     {
-        Debug.Log("On disable");
         GameManager.onSceneLoaded -= Set;
     }
-
-    private void Start()
+    public void Set(ProgressInfo args)
     {
-        Debug.Log("On start");
-    }
-
-    public void Set(SceneTransitionArgs args)
-    {
-        if (args.spawnId >= spawnPoints.Count || args.spawnId < 0)
+        if (args.spawn >= spawnPoints.Count || args.spawn < 0)
         {
-            Debug.LogError($"Spawn point index out of range: {args.spawnId} != [0 - {spawnPoints.Count}]");
+            Debug.LogError($"# {gameObject.scene.name} warp index out of range: {args.spawn} != [0 - {spawnPoints.Count}]");
+            return;
         }
 
-        var point = spawnPoints[args.spawnId];
-        player.Position = point.position;
-        player.transform.rotation = point.rotation;
-        camera_.ResetPosition();
+        var point = spawnPoints[args.spawn];
+        if (player != null)
+        {
+            player.Position = point.position;
+            player.transform.rotation = point.rotation;
+        }
+        camera_?.ResetPosition();
         Debug.Log("Set spawn point...");
     }
 }

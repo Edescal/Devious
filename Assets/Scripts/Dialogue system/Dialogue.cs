@@ -6,41 +6,21 @@ namespace Edescal.DialogueSystem
     [CreateAssetMenu(fileName = "New dialogue", menuName = "Dialogue system/Create new dialogue")]
     public class Dialogue : ScriptableObject
     {
-        [field: SerializeField, TextArea]
-        public string[] dialogues { get; private set; }
+        [SerializeField]
+        private string[] dialogueIds = new string[] { };
+
         [field: SerializeField]
         public ResponseType responseType { get; private set; }
 
-        //DEPRECATED
-        public int[] dialogueIds { get; private set; }
-        public string[] GetDialogues(int language = 1)
+        public string[] GetDialogues()
         {
-            var csv = Resources.Load<TextAsset>("Dialogues");
-            var split = csv.text.Split("\n");
-            var dialogues = new List<string>();
-
-            for(int i = 1; i < split.Length; i++)
+            var localizedDialogues = new string[dialogueIds.Length];
+            for (int i = 0; i < dialogueIds.Length; i++)
             {
-                var col = split[i].Split(";");
-                if (int.TryParse(col[0], out int result))
-                {
-                    foreach(int id in dialogueIds)
-                    {
-                        if (result == id)
-                        {
-                            dialogues.Add(col[language]);
-                        }
-                    }
-                }
+                localizedDialogues[i] = Localization.GetString(dialogueIds[i]);
             }
-            return dialogues.ToArray();
+            return localizedDialogues;
         }
-    }
-
-    public enum Language
-    {
-        ESP = 1,
-        ENG = 2
     }
 
     public enum ResponseType

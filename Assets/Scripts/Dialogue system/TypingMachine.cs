@@ -10,6 +10,7 @@ namespace Edescal.DialogueSystem
     {
         public bool isRunning { get; set; }
         public bool isPressingFaster { get; set; }
+        public bool forceEnd { get; set; }
 
         [Space(-10), Header("-> Settings:")]
         [SerializeField] private TMP_Text UIText;
@@ -30,6 +31,7 @@ namespace Edescal.DialogueSystem
         public void Reset(MonoBehaviour mono)
         {
             isPressingFaster = false;
+            forceEnd = false;
             UIText.text = string.Empty;
 
             if(coroutine != null)
@@ -51,6 +53,8 @@ namespace Edescal.DialogueSystem
 
             while(counter < charNumber)
             {
+                if (forceEnd) break;
+                
                 int visibleCount = (counter % charNumber) + 1;
                 UIText.maxVisibleCharacters = visibleCount;
 

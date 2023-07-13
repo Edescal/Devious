@@ -1,32 +1,28 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 using Edescal;
 
 public class AnimatorManager : MonoBehaviour
 {
-    private Player player;
+    public Animator Animator => animator;
+
     private Animator animator;
     private RuntimeAnimatorController defaultController;
+    private bool trackAnimation = false;
     private bool rootMotion = false;
     private int rootMotionStateHash = 0;
     private float rootMotionTransition = 0;
 
     private void Awake()
     {
-        player = GetComponent<Player>();
         animator = GetComponent<Animator>();
         defaultController = animator.runtimeAnimatorController;
     }
 
     private void OnAnimatorMove()
     {
-        if (player == null)
-        {
-            transform.position = animator.rootPosition;
-            transform.rotation = animator.rootRotation;
-            return;
-        }
-
-        if (!rootMotion) return;
+        if (!trackAnimation) return;
 
         if (rootMotionTransition > 0)
         {
@@ -35,35 +31,48 @@ public class AnimatorManager : MonoBehaviour
         }
 
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (stateInfo.shortNameHash != rootMotionStateHash)
+        if (stateInfo.shortNameHash != rootMotionStateHash || stateInfo.normalizedTime >= 1)
         {
-            animator.applyRootMotion = false;
-            rootMotion = false;
-            player.ThirdPersonController.CanMove = true;
-            player.Interactor.CanInteract = true;
+            trackAnimation = false;
+            if (rootMotion)
+            {
+                animator.applyRootMotion = false;
+                rootMotion = false;
+            }
         }
-        else
+        else if (rootMotion)
         {
-            player.ThirdPersonController.Position = animator.rootPosition;
-            player.ThirdPersonController.Rotation = animator.rootRotation;
+            transform.position = animator.rootPosition;
+            transform.rotation = animator.rootRotation;
         }
     }
 
-    public Animator Animator => animator;
-
-    public void Play(string state) => Play(state, 0.25f); // For debug animations
-    public void Play(string state, float transitionTime, int layer = 0, bool applyRootMotion = false)
+    public void Play(string state, float transitionTime, int layer = 0, bool applyRootMotion = true, Action onStart = null, Action onEnd = null)
     {
         animator.CrossFadeInFixedTime(state, transitionTime, layer);
+
+        if (applyRootMotion && (onStart != null || onEnd != null))
+        {
+            trackAnimation = true;
+            rootMotionTransition = transitionTime;
+            rootMotionStateHash = Animator.StringToHash(state);
+        }
 
         if (applyRootMotion)
         {
             rootMotion = true;
             animator.applyRootMotion = true;
-            rootMotionTransition = transitionTime;
-            rootMotionStateHash = Animator.StringToHash(state);
-            player.ThirdPersonController.CanMove = false;
-            player.Interactor.CanInteract = false;
+        }
+
+        if (onStart != null || onEnd != null)
+        {
+            IEnumerator Promise()
+            {
+                onStart?.Invoke();
+                while (animator.applyRootMotion) yield return null;
+                onEnd?.Invoke();
+            }
+            StartCoroutine(Promise());
         }
     }
 
@@ -77,5 +86,4 @@ public class AnimatorManager : MonoBehaviour
 
         animator.runtimeAnimatorController = overrideController;
     }
-
 }

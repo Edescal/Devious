@@ -95,8 +95,11 @@ namespace Edescal.Interactables
                             interactorLabel?.Init();
                         }
                         var temp = SetCurrentInteractable();
-                        interactorLabel.SetLabel(temp.Name);
+                        currentInteractable?.Unfocus();
                         currentInteractable = temp;
+                        currentInteractable?.Focus();
+                        interactorLabel?.SetLabel(temp.Name);
+                        /*
                         IEnumerator OnFocus()
                         {
                             temp.Focus();
@@ -107,6 +110,7 @@ namespace Edescal.Interactables
                             temp.Unfocus();
                         }
                         StartCoroutine(OnFocus());
+                        */
                         return;
                     }
                 }
@@ -114,6 +118,7 @@ namespace Edescal.Interactables
 
             if (currentInteractable != null)
             {
+                currentInteractable.Unfocus();
                 interactorLabel?.Stop();
             }
             currentInteractable = null;

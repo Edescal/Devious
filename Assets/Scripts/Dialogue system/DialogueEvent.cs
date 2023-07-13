@@ -6,19 +6,14 @@ namespace Edescal.DialogueSystem
 {
     public class DialogueEvent : Interactable
     {
-        private DialogueSystem system;
-        private Interactor interactor;
-
         [System.Serializable]
         private class DialogueEventWrapper
         {
             [HideInInspector]
             public string name;
-            [Header("Set dialogue:")]
             public Dialogue targetDialogue;
             [Space(10)]
             public UnityEvent onDialogueEnded;
-            [Header("Set response events:")]
             public string responseMessage;
             public ResponseEvent[] responseEvents;
         }
@@ -31,15 +26,18 @@ namespace Edescal.DialogueSystem
         public Dialogue currentDialogue { get; set; }
         [field: SerializeField]
         public Punctuation Punctuation { get; set; }
+        [SerializeField]
+        private DialogueSystem system;
+        private Interactor interactor;
 
-
-        [Header("Event handling"), SerializeField]
+        [SerializeField]
         private DialogueEventWrapper[] dialogueEvents;
 
         [System.Serializable]
         public class ResponseEvent
         {
             public string name;
+            public string Name => Localization.GetString(name);
             public UnityEvent responseEvent;
         }
 
@@ -51,7 +49,7 @@ namespace Edescal.DialogueSystem
                 {
                     if (dialogueEvents[i].targetDialogue != currentDialogue) continue;
                     if (dialogueEvents[i].targetDialogue.responseType == ResponseType.NO_OPTIONS) continue;
-                    return dialogueEvents[i].responseMessage;
+                    return Localization.GetString(dialogueEvents[i].responseMessage);
                 }
                 return $"No response message avaiable for {currentDialogue}";
             }
@@ -73,8 +71,15 @@ namespace Edescal.DialogueSystem
 
         public override void Interact(Interactor interactor)
         {
-            if (currentDialogue == null || system == null) return;
-
+            if (currentDialogue == null || system == null)
+            {
+                if (currentDialogue == null)
+                    Debug.Log("# Current dialogue is null");
+                if (system == null)
+                    Debug.Log("# Dialogue system is null");
+                return;
+            }
+            
             base.Interact(interactor);
             this.interactor = interactor;
             if (interactor != null)
@@ -84,10 +89,11 @@ namespace Edescal.DialogueSystem
                     controls.SwitchUI(true);
                 }
             }
-            system.InitDialogue(this);
+            print($"Raised dialogue start event -> GameObject: {name}");
+            system.StartDialogue(this);
         }
 
-        public void DialogueStatus(bool success)
+        public void DialogueEnd()
         {
             if (interactor != null)
             {
@@ -96,24 +102,27 @@ namespace Edescal.DialogueSystem
                     controls.SwitchUI(false);
                 }
             }
+            print($"Raised dialogue end event -> GameObject: {name}");
+            onDialogueEnd?.Invoke();
+        }
 
-            if (success && dialogueEvents != null && dialogueEvents.Length > 0)
+        public void CustomEvent()
+        {
+            if (dialogueEvents != null && dialogueEvents.Length > 0)
             {
                 foreach (var events in dialogueEvents)
                 {
                     if (events.targetDialogue == currentDialogue)
                     {
-                        print($"Raised custom events for {currentDialogue.name}");
+                        print($"Raised custom event -> {currentDialogue.name}");
                         events.onDialogueEnded?.Invoke();
                         break;
                     }
                 }
             }
-
-            onDialogueEnd?.Invoke();
         }
 
-        public void ResponseStatus(int index)
+        public void ResponseSelected(int index)
         {
             if (dialogueEvents == null || dialogueEvents.Length == 0) return;
 
@@ -124,10 +133,19 @@ namespace Edescal.DialogueSystem
                 if (events.responseEvents.Length > 0)
                 {
                     index = Mathf.Clamp(index, 0, events.responseEvents.Length - 1);
-                    print($"Raised {events.responseEvents[index].name}");
+                    print($"Raised response event -> {events.responseEvents[index].name}");
                     events.responseEvents[index].responseEvent?.Invoke();
                     break;
                 }
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                Interactor interactor = other.GetComponent<Interactor>();
+                Interact(interactor);
             }
         }
 
@@ -141,12 +159,7 @@ namespace Edescal.DialogueSystem
 
         private void OnValidate()
         {
-            if (system == null)
-            {
-                system = GameObject.FindObjectOfType<DialogueSystem>();
-            }
-
-            if (dialogueEvents.Length == 0) return;
+            if (dialogueEvents == null || dialogueEvents.Length == 0) return;
 
             foreach (var customEvent in dialogueEvents)
             {
@@ -159,15 +172,15 @@ namespace Edescal.DialogueSystem
                 }
 
                 //Si el diálogo explícitamente no puede tener respuestas
-                if (customEvent.targetDialogue.responseType == ResponseType.NO_OPTIONS && customEvent.responseEvents.Length > 0)
+                customEvent.name = $"Custom events - {customEvent.targetDialogue.name}";
+                if (customEvent.targetDialogue.responseType == ResponseType.NO_OPTIONS)
                 {
-                    customEvent.name = $"Dialogue {customEvent.targetDialogue.name} doesn't accept responses!";
+                    customEvent.responseMessage = $"Dialogue {customEvent.targetDialogue.name} doesn't accept responses!";
                     customEvent.responseEvents = System.Array.Empty<ResponseEvent>();
                     continue;
                 }
 
                 //En otro caso...
-                customEvent.name = $"Custom events - {customEvent.targetDialogue.name}";
                 switch (customEvent.targetDialogue.responseType)
                 {
                     case ResponseType.OK:

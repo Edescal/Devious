@@ -2,7 +2,8 @@
 
 public class SceneWarp : MonoBehaviour
 {
-    public SceneTransitionArgs transitionArgs;
+    public int sceneIndex;
+    public int spawnPoint;
 
     public void Load()
     {
@@ -12,6 +13,14 @@ public class SceneWarp : MonoBehaviour
             return;
         }
 
-        GameManager.instance.LoadScene(transitionArgs);
+        GameManager.instance.ChangeScene(this);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Load();
+        }
     }
 }

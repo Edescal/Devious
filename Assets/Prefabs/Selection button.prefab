@@ -526,11 +526,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.078431375}
-    m_PressedColor: {r: 1, g: 1, b: 1, a: 0.19607843}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.078431375}
-    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0}
+    m_NormalColor: {r: 0.6431373, g: 0.6431373, b: 0.6431373, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 0.8156863, b: 0, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.3764706, g: 0.3764706, b: 0.3764706, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.3
   m_SpriteState:
@@ -549,12 +549,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  labelKey: 
   buttonLabel: {fileID: 7862380769293336966}
-  imageCanvas: {fileID: 7862380769949746809}
-  fadeTime: 0.3
-  glowCanvas: {fileID: 7862380770283643993}
-  glowTime: 0.7
-  tweenType: 14
+  animatedImage: {fileID: 0}
   selectedSound: {fileID: 8300000, guid: cf917f38e05e93649a8cab4dfc72d34d, type: 3}
   pressedSound: {fileID: 8300000, guid: 202434f0b9d95b544a7e67e5726bb12c, type: 3}
   hoverSound: {fileID: 0}
