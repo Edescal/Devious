@@ -18,6 +18,17 @@ menu_credits;Créditos;Credits
 menu_lang;Lenguaje: Español;Language: English
 menu_continue;Continuar;Continue
 menu_options;Opciones;Options
+menu_controls;Controles;Controls
+
+con_move;Moverse;Movement
+con_cam;Cámara;Camera
+con_q;Acción;Action
+con_e;Cancelar;Cancel
+con_zoom+;Zoom (+);Zoom (+)
+con_zoom-;Zoom (-);Zoom (-)
+con_p;Fijar;Lock on
+con_run;Correr;Sprint
+
 
 Scn_ama;Amaltea;Amaltea
 Scn_gani;Jardín Ganímedes;Ganimedes Garden
@@ -49,7 +60,7 @@ eye_event_3a;<color=yellow>"Capítulo 4: <color=red>En relación a los Sueños y
 eye_event_3b;...;...
 eye_event_3c;<color=yellow>"... la exposición a lo prohibido crea umbrales que el ser humano es incapaz de percibir por diseño natural."</color>;<color=yellow>"... exposure to the forbidden creates portals that human beings can not naturally perceive by natural design."</color>
 
-eye_event_3d;<color=yellow>"Emisarios de otros mundos, en su incansable búsqueda de carcasas, aprovechan la rara oportunidad de crear un vínculo psíquico con nuestro plano de existencia."</color>;<color=yellow>"Otherworldly emissaries, in their relentless pursuit of vessels, seize the rare chance to forge a psychic bond with our plane of existence"</color>
+eye_event_3d;<color=yellow>"Emisarios de otros mundos, incansablemente buscan la oportunidad de crear un vínculo psíquico con nuestro plano de existencia."</color>;<color=yellow>"Otherworldly emissaries, in their relentless pursuit of vessels, seize the rare chance to forge a psychic bond with our plane of existence"</color>
 
 eye_revealed_1;<color=yellow>"... el mayor peligro del ritual es que los vínculos creados se cierren antes de terminar nuestras diligencias..."</color>;The greatest danger of the ritual is that the bonds created may close before we finish our duty.
 eye_revealed_2;<color=yellow>"... no hay vuelta atrás, no hay tiempo al que avanzar ni retroceder..."</color>;There's no turning back, there's no time to move forward or backward.

@@ -55,7 +55,7 @@ namespace Edescal.UI
                 screenshot.Apply();
 
                 byte[] bytes = screenshot.EncodeToPNG();
-                System.IO.File.WriteAllBytes($"{Application.dataPath}/Screenshots/Screen_{System.DateTime.UtcNow.ToString()}.png", bytes);
+                System.IO.File.WriteAllBytes($"{Application.dataPath}/Screenshots/Screen_{gameObject.scene.name}.png", bytes);
             }
             StartCoroutine(Saving());
         }

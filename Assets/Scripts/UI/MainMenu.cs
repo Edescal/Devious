@@ -7,8 +7,12 @@ namespace Edescal
     public class MainMenu : MonoBehaviour
     {
         public CanvasGroup buttonsCanvas;
+        public CanvasGroup controlsCanvas;
+        public float controlsFade = 0.5f;
         public SelectableButton[] buttons;
         public SelectableButton newGameButton, langButton;
+        private bool showControls = false;
+        private bool fadingControls = false;
 
         [Header("FOV FX")]
         public CinemachineVirtualCamera virtualCamera;
@@ -76,6 +80,18 @@ namespace Edescal
             foreach (var b in buttons)
                 b.interactable = false;
             Application.Quit();
+        }
+
+        public void Controls()
+        {
+            if (fadingControls) return;
+
+            fadingControls = true;
+            showControls = !showControls;
+            float target = showControls ? 1 : 0;
+            LeanTween.alphaCanvas(controlsCanvas, target, controlsFade)
+                .setOnComplete(() => fadingControls = false)
+                .setEase(LeanTweenType.easeInOutSine);
         }
     }
 }
